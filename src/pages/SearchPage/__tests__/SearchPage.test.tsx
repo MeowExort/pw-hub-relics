@@ -55,7 +55,7 @@ describe('SearchPage', () => {
     )
 
     expect(screen.getByLabelText('Сортировка по')).toBeInTheDocument()
-    expect(screen.getByLabelText('Направление')).toBeInTheDocument()
+    expect(screen.getByLabelText('Направление сортировки')).toBeInTheDocument()
   })
 
   it('показывает выбор атрибута если выбрана сортировка по атрибуту', () => {

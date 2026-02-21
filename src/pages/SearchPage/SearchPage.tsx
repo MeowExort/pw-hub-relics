@@ -1,11 +1,26 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Spinner, Pagination, Select } from '@/shared/ui'
 import { useRelicsSearch, useDictionaries } from '@/shared/hooks'
 import { useRelicSearchParams } from './useSearchParams'
 import { SearchFilters } from './components/SearchFilters'
 import { RelicCard } from './components/RelicCard'
 import { ViewToggle } from './components/ViewToggle'
+import { ActiveFilterChips } from './components/ActiveFilterChips'
 import styles from './SearchPage.module.scss'
+
+/** Подсчитывает количество активных фильтров */
+function countActiveFilters(params: Record<string, any>): number {
+  const filterKeys = [
+    'serverId', 'soulType', 'race', 'soulLevel', 'slotTypeId', 'mainAttributeId',
+    'minPrice', 'maxPrice', 'minEnhancementLevel', 'maxEnhancementLevel',
+    'minAbsorbExperience', 'maxAbsorbExperience',
+  ]
+  let count = filterKeys.filter((k) => params[k] != null).length
+  if (params.additionalAttributes?.length > 0) {
+    count += params.additionalAttributes.length
+  }
+  return count
+}
 
 /** Страница поиска реликвий */
 export function SearchPage() {
@@ -13,6 +28,15 @@ export function SearchPage() {
   const { data, isLoading, isError } = useRelicsSearch(params)
   const { attributes } = useDictionaries()
   const [view, setView] = useState<'grid' | 'list'>('grid')
+  const [filtersOpen, setFiltersOpen] = useState(false)
+
+  const activeFiltersCount = useMemo(() => countActiveFilters(params), [params])
+
+  /** ID доп. атрибутов, по которым идёт фильтрация (для подсветки в карточках) */
+  const highlightedAttrIds = useMemo(
+    () => new Set((params.additionalAttributes ?? []).map((a: any) => a.id)),
+    [params.additionalAttributes],
+  )
 
   const sortOptions = [
     { value: 'CreatedAt', label: 'Дата добавления' },
@@ -27,10 +51,27 @@ export function SearchPage() {
     <div className={styles.page}>
       <div className={styles.toolbar}>
         <h1 className={styles.title}>Поиск реликвий</h1>
-        <ViewToggle value={view} onChange={setView} />
+        <div className={styles.toolbarActions}>
+          <button
+            type="button"
+            className={styles.filtersToggle}
+            onClick={() => setFiltersOpen(!filtersOpen)}
+          >
+            Фильтры
+            {activeFiltersCount > 0 && (
+              <span className={styles.filtersBadge}>{activeFiltersCount}</span>
+            )}
+            <span className={styles.filtersArrow}>{filtersOpen ? '▲' : '▼'}</span>
+          </button>
+          <ViewToggle value={view} onChange={setView} />
+        </div>
       </div>
 
-      <SearchFilters params={params} onChange={setParams} onReset={resetParams} />
+      {filtersOpen && (
+        <SearchFilters params={params} onChange={setParams} onReset={resetParams} />
+      )}
+
+      <ActiveFilterChips params={params} onChange={setParams} onReset={resetParams} />
 
       {isLoading && (
         <div className={styles.center}>
@@ -72,16 +113,15 @@ export function SearchPage() {
                 />
               )}
 
-              <Select
-                placeholder="Направление"
-                options={[
-                  { value: 'desc', label: 'По убыванию' },
-                  { value: 'asc', label: 'По возрастанию' },
-                ]}
-                value={params.sortDirection || ''}
-                onChange={(v) => setParams({ sortDirection: (v as 'asc' | 'desc') || undefined })}
-                className={styles.sortSelect}
-              />
+              <button
+                type="button"
+                className={styles.directionToggle}
+                onClick={() => setParams({ sortDirection: params.sortDirection === 'asc' ? 'desc' : 'asc' })}
+                aria-label="Направление сортировки"
+                title={params.sortDirection === 'asc' ? 'По возрастанию' : 'По убыванию'}
+              >
+                {params.sortDirection === 'asc' ? '↑ По возрастанию' : '↓ По убыванию'}
+              </button>
             </div>
           </div>
 
@@ -89,7 +129,7 @@ export function SearchPage() {
             <>
               <div className={view === 'grid' ? styles.grid : styles.list}>
                 {data.items.map((relic) => (
-                  <RelicCard key={relic.id} relic={relic} view={view} />
+                  <RelicCard key={relic.id} relic={relic} view={view} highlightedAttributeIds={highlightedAttrIds} />
                 ))}
               </div>
 

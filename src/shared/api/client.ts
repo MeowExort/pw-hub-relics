@@ -5,6 +5,7 @@
  */
 
 import { getAccessToken, refreshAccessToken } from './auth'
+import { getFingerprint } from '@/shared/security/fingerprint'
 
 /** Ошибка API с кодом статуса */
 export class ApiError extends Error {
@@ -24,6 +25,8 @@ interface RequestOptions {
   signal?: AbortSignal
   /** Пропустить автоматический refresh при 401 */
   skipAuth?: boolean
+  /** Дополнительные заголовки запроса */
+  headers?: Record<string, string>
 }
 
 /**
@@ -80,6 +83,15 @@ function buildHeaders(): HeadersInit {
   const token = getAccessToken()
   if (token) {
     headers['Authorization'] = `Bearer ${token}`
+  }
+
+  // Fingerprint устройства для валидации клиента
+  headers['X-Client-FP'] = getFingerprint()
+
+  // API Key для авторизации запросов
+  const apiKey = import.meta.env.VITE_API_KEY
+  if (apiKey) {
+    headers['X-Api-Key'] = apiKey
   }
 
   return headers
@@ -151,7 +163,7 @@ export async function post<T>(url: string, options?: RequestOptions): Promise<T>
     url,
     {
       method: 'POST',
-      headers: buildHeaders(),
+      headers: { ...buildHeaders(), ...options?.headers },
       body: options?.body ? JSON.stringify(options.body) : undefined,
       signal: options?.signal,
     },

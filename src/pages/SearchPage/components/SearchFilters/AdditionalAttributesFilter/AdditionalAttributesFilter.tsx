@@ -1,8 +1,71 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import clsx from 'clsx'
-import { Button } from '@/shared/ui'
 import type { AttributeFilterDto, AttributeDefinition } from '@/shared/types'
 import styles from './AdditionalAttributesFilter.module.scss'
+
+interface AttributeSelectProps {
+  /** Список всех атрибутов */
+  attributes: AttributeDefinition[]
+  /** ID уже выбранных атрибутов */
+  selectedIds: number[]
+  /** Обработчик выбора атрибута */
+  onSelect: (id: number) => void
+}
+
+/** Кастомный выпадающий список для выбора атрибута (замена нативного select) */
+function AttributeSelect({ attributes, selectedIds, onSelect }: AttributeSelectProps) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  const available = attributes.filter((a) => !selectedIds.includes(a.id))
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleSelect = useCallback((id: number) => {
+    onSelect(id)
+    setOpen(false)
+  }, [onSelect])
+
+  return (
+    <div className={styles.addSection} ref={ref}>
+      <span className={styles.addLabel}>Добавить атрибут:</span>
+      <button
+        type="button"
+        className={styles.addSelect}
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        disabled={available.length === 0}
+      >
+        <span className={styles.addSelectText}>Выберите атрибут...</span>
+        <span className={styles.addSelectArrow}>▾</span>
+      </button>
+      {open && available.length > 0 && (
+        <ul className={styles.addDropdown} role="listbox">
+          {available.map((a) => (
+            <li
+              key={a.id}
+              className={styles.addOption}
+              role="option"
+              aria-selected={false}
+              onClick={() => handleSelect(a.id)}
+            >
+              {a.name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
 
 interface AdditionalAttributesFilterProps {
   /** Список доступных атрибутов */
@@ -116,25 +179,11 @@ export function AdditionalAttributesFilter({
             })}
           </div>
 
-          <div className={styles.addSection}>
-            <span className={styles.addLabel}>Добавить атрибут:</span>
-            <select
-              className={styles.addSelect}
-              value=""
-              onChange={(e) => addAttribute(Number(e.target.value))}
-            >
-              <option value="" disabled>
-                Выберите атрибут...
-              </option>
-              {attributes
-                .filter((a) => !value.some((v) => v.id === a.id))
-                .map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.name}
-                  </option>
-                ))}
-            </select>
-          </div>
+          <AttributeSelect
+            attributes={attributes}
+            selectedIds={value.map((v) => v.id)}
+            onSelect={addAttribute}
+          />
         </div>
       )}
     </div>

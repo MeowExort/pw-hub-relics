@@ -14,23 +14,29 @@ describe('Select', () => {
     expect(screen.getByText('Сервер')).toBeInTheDocument()
   })
 
-  it('рендерит все опции и плейсхолдер', () => {
+  it('отображает плейсхолдер когда значение не выбрано', () => {
     render(<Select options={options} value={undefined} onChange={() => {}} />)
-    const selectEl = screen.getByRole('combobox')
-    expect(selectEl).toBeInTheDocument()
-    expect(selectEl.querySelectorAll('option')).toHaveLength(4) // placeholder + 3
+    expect(screen.getByText('Все')).toBeInTheDocument()
   })
 
-  it('вызывает onChange при выборе', () => {
+  it('открывает выпадающий список при клике', () => {
+    render(<Select options={options} value={undefined} onChange={() => {}} />)
+    fireEvent.click(screen.getByRole('button'))
+    expect(screen.getByRole('listbox')).toBeInTheDocument()
+    expect(screen.getAllByRole('option')).toHaveLength(4) // плейсхолдер + 3
+  })
+
+  it('вызывает onChange при выборе опции', () => {
     const onChange = vi.fn()
     render(<Select options={options} value={undefined} onChange={onChange} />)
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: '2' } })
+    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByText('Второй'))
     expect(onChange).toHaveBeenCalledWith('2')
   })
 
   it('отображает текущее значение', () => {
     render(<Select options={options} value={2} onChange={() => {}} />)
-    expect(screen.getByRole('combobox')).toHaveValue('2')
+    expect(screen.getByText('Второй')).toBeInTheDocument()
   })
 
   it('показывает пользовательский плейсхолдер', () => {
@@ -38,5 +44,21 @@ describe('Select', () => {
       <Select options={options} value={undefined} onChange={() => {}} placeholder="Выберите" />,
     )
     expect(screen.getByText('Выберите')).toBeInTheDocument()
+  })
+
+  it('закрывает список после выбора', () => {
+    render(<Select options={options} value={undefined} onChange={() => {}} />)
+    fireEvent.click(screen.getByRole('button'))
+    expect(screen.getByRole('listbox')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('Первый'))
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+  })
+
+  it('вызывает onChange с пустой строкой при выборе плейсхолдера', () => {
+    const onChange = vi.fn()
+    render(<Select options={options} value={1} onChange={onChange} placeholder="Все" />)
+    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('option', { name: 'Все' }))
+    expect(onChange).toHaveBeenCalledWith('')
   })
 })

@@ -42,8 +42,12 @@ describe('AdditionalAttributesFilter', () => {
         onChange={onChange}
       />
     )
+    // Открываем основной dropdown
     fireEvent.click(screen.getByRole('button'))
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: '1' } })
+    // Открываем кастомный select атрибутов
+    fireEvent.click(screen.getByText('Выберите атрибут...'))
+    // Выбираем атрибут из списка
+    fireEvent.click(screen.getByText('Сила'))
     
     expect(onChange).toHaveBeenCalledWith([{ id: 1, minValue: null, maxValue: null }])
   })

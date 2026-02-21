@@ -1,7 +1,10 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .backLink {
@@ -18,60 +21,66 @@
   }
 }
 
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-lg);
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
 }
 
 .titleBlock {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
 }
 
 .title {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--text);
+  margin: 0;
 }
 
 .subtitle {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--text-secondary);
 }
 
 .price {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--success);
   font-family: var(--font-mono);
   white-space: nowrap;
 }
 
-.sections {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-lg);
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.section {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+.divider {
+  height: 1px;
+  background: var(--border);
 }
 
 .sectionTitle {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--text);
-  margin-bottom: var(--space-md);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
 }
 
 .attrList {
@@ -96,14 +105,25 @@
   font-family: var(--font-mono);
 }
 
-.mainAttr .attrName {
-  color: var(--primary);
-  font-weight: 600;
+.mainAttr {
+  .attrName {
+    font-weight: 600;
+  }
+
+  .attrValue {
+    font-weight: 700;
+  }
+}
+
+.attrDivider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-xs) 0;
 }
 
 .infoGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: var(--space-sm);
 }
 

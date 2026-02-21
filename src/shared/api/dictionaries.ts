@@ -1,7 +1,8 @@
 /**
  * API-сервис для справочников.
+ * Все запросы проксируются через BFF.
  */
-import { get } from './client'
+import { proxyRequest } from './proxy'
 import type {
   Server,
   SlotType,
@@ -12,30 +13,30 @@ import type {
 
 /** Список серверов */
 export async function getServers(signal?: AbortSignal): Promise<Server[]> {
-  const data = await get<{ servers: Server[] } | Server[]>('/api/dictionaries/servers', { signal })
+  const data = await proxyRequest<{ servers: Server[] } | Server[]>('getServers', {}, signal)
   return Array.isArray(data) ? data : data.servers
 }
 
 /** Типы слотов */
 export async function getSlotTypes(signal?: AbortSignal): Promise<SlotType[]> {
-  const data = await get<{ slotTypes: SlotType[] } | SlotType[]>('/api/dictionaries/slot-types', { signal })
+  const data = await proxyRequest<{ slotTypes: SlotType[] } | SlotType[]>('getSlotTypes', {}, signal)
   return Array.isArray(data) ? data : data.slotTypes
 }
 
 /** Определения атрибутов */
 export async function getAttributes(signal?: AbortSignal): Promise<AttributeDefinition[]> {
-  const data = await get<{ attributes: AttributeDefinition[] } | AttributeDefinition[]>('/api/dictionaries/attributes', { signal })
+  const data = await proxyRequest<{ attributes: AttributeDefinition[] } | AttributeDefinition[]>('getAttributes', {}, signal)
   return Array.isArray(data) ? data : data.attributes
 }
 
 /** Определения реликвий */
 export async function getRelicDefinitions(signal?: AbortSignal): Promise<RelicDefinition[]> {
-  const data = await get<{ relicDefinitions: RelicDefinition[] } | RelicDefinition[]>('/api/dictionaries/relic-definitions', { signal })
+  const data = await proxyRequest<{ relicDefinitions: RelicDefinition[] } | RelicDefinition[]>('getRelicDefinitions', {}, signal)
   return Array.isArray(data) ? data : data.relicDefinitions
 }
 
 /** Кривая заточки */
 export async function getEnhancementCurve(signal?: AbortSignal): Promise<EnhancementCurvePoint[]> {
-  const data = await get<{ enhancementCurve: EnhancementCurvePoint[] } | EnhancementCurvePoint[]>('/api/dictionaries/enhancement-curve', { signal })
+  const data = await proxyRequest<{ enhancementCurve: EnhancementCurvePoint[] } | EnhancementCurvePoint[]>('getEnhancementCurve', {}, signal)
   return Array.isArray(data) ? data : data.enhancementCurve
 }

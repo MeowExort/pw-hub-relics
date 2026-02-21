@@ -157,16 +157,70 @@
 }
 
 .addSelect {
+  appearance: none;
   background: var(--bg-darker);
-  color: var(--text);
+  color: var(--text-muted);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
   font-size: var(--font-size-sm);
+  font-family: var(--font-family);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  text-align: left;
+  width: 100%;
+
+  &:hover {
+    border-color: var(--border-light);
+  }
 
   &:focus {
     outline: none;
     border-color: var(--primary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.addSelectText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.addSelectArrow {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.addDropdown {
+  list-style: none;
+  margin: var(--space-xs) 0 0;
+  padding: var(--space-xs) 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.addOption {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  &:hover {
+    background: var(--primary);
+    color: var(--text-on-primary, #fff);
   }
 }

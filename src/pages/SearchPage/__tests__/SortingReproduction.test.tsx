@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { SearchPage } from '../SearchPage'
 import { useRelicsSearch, useDictionaries } from '@/shared/hooks'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
-import React from 'react'
 
 vi.mock('@/shared/hooks', () => ({
   useRelicsSearch: vi.fn(),
@@ -41,23 +40,22 @@ describe('SearchPage Sorting Flow', () => {
       </MemoryRouter>
     )
 
-    const sortSelect = screen.getByLabelText('Сортировка по')
-    
-    // Initial state
-    expect(sortSelect).toHaveValue('')
+    // Находим кнопку кастомного Select по aria-label
+    const sortButton = screen.getByRole('button', { name: 'Сортировка по' })
+    expect(sortButton).toBeInTheDocument()
 
-    // Change sorting
-    fireEvent.change(sortSelect, { target: { value: 'Price' } })
+    // Открываем выпадающий список
+    fireEvent.click(sortButton)
 
-    // Verify it changed in UI
+    // Выбираем опцию «Цена»
+    fireEvent.click(screen.getByRole('option', { name: 'Цена' }))
+
+    // Проверяем, что useRelicsSearch вызван с новыми параметрами
     await waitFor(() => {
-      expect(sortSelect).toHaveValue('Price')
+      expect(useRelicsSearch).toHaveBeenCalledWith(expect.objectContaining({
+        sortBy: 'Price',
+        pageNumber: 1
+      }))
     })
-
-    // Verify useRelicsSearch was called with new params
-    expect(useRelicsSearch).toHaveBeenCalledWith(expect.objectContaining({
-      sortBy: 'Price',
-      pageNumber: 1
-    }))
   })
 })

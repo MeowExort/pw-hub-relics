@@ -2,29 +2,23 @@ import { Link, useParams } from 'react-router-dom'
 import { Spinner } from '@/shared/ui'
 import { useRelicDetail } from '@/shared/hooks'
 import clsx from 'clsx'
+import { PriceHistoryChart } from './PriceHistoryChart'
 import styles from './RelicDetailPage.module.scss'
 
 /** Маппинг типов души */
 const SOUL_TYPE_NAMES: Record<number, string> = {
-  0: 'Дракон',
-  1: 'Тигр',
-  2: 'Черепаха',
-  3: 'Феникс',
+    1: 'Душа Покоя',
+    2: 'Душа Тяньюя',
 }
 
 /** Маппинг рас */
 const RACE_NAMES: Record<number, string> = {
-  0: 'Люди',
-  1: 'Зооморфы',
-  2: 'Сиды',
-  3: 'Амфибии',
-  4: 'Древние',
-  5: 'Тени',
-}
-
-/** Форматирование цены */
-function formatPrice(price: number): string {
-  return price.toLocaleString('ru-RU')
+  1: 'Люди',
+  2: 'Зооморфы',
+  3: 'Сиды',
+  4: 'Амфибии',
+  5: 'Древние',
+  6: 'Тени',
 }
 
 /** Форматирование даты */
@@ -63,12 +57,13 @@ export function RelicDetailPage() {
         ← Назад к поиску
       </Link>
 
-      <div className={styles.header}>
-        <div className={styles.titleBlock}>
+      <div className={styles.card}>
+        {/* Header: иконка + название + цена */}
+        <div className={styles.header}>
           {def.iconUri && (
             <img src={def.iconUri} alt={def.name} className={styles.icon} />
           )}
-          <div>
+          <div className={styles.titleBlock}>
             <h1 className={styles.title}>
               {def.name}
               {relic.enhancementLevel > 0 && ` +${relic.enhancementLevel}`}
@@ -78,18 +73,22 @@ export function RelicDetailPage() {
               {RACE_NAMES[def.race] ?? `Раса ${def.race}`} · {def.slotType.name} · {relic.server.name}
             </span>
           </div>
+          <span className={styles.price}>{relic.priceFormatted}</span>
         </div>
-        <span className={styles.price}>{relic.priceFormatted}</span>
-      </div>
 
-      <div className={styles.sections}>
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Атрибуты</h2>
+        <div className={styles.divider} />
+
+        {/* Атрибуты */}
+        <div>
+          <div className={styles.sectionTitle}>Атрибуты</div>
           <div className={styles.attrList}>
             <div className={clsx(styles.attrRow, styles.mainAttr)}>
               <span className={styles.attrName}>{relic.mainAttribute.attributeDefinition.name}</span>
               <span className={styles.attrValue}>{relic.mainAttribute.value}</span>
             </div>
+            {relic.additionalAttributes.length > 0 && (
+              <div className={styles.attrDivider} />
+            )}
             {relic.additionalAttributes.map((attr, idx) => (
               <div key={idx} className={styles.attrRow}>
                 <span className={styles.attrName}>{attr.attributeDefinition.name}</span>
@@ -99,23 +98,28 @@ export function RelicDetailPage() {
           </div>
         </div>
 
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Информация</h2>
-          <div className={styles.infoGrid}>
-            <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>Уровень заточки</span>
-              <span className={styles.infoValue}>+{relic.enhancementLevel}</span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>Опыт поглощения</span>
-              <span className={styles.infoValue}>{relic.absorbExperience.toLocaleString('ru-RU')}</span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>Дата добавления</span>
-              <span className={styles.infoValue}>{formatDate(relic.createdAt)}</span>
-            </div>
+        <div className={styles.divider} />
+
+        {/* Информация */}
+        <div className={styles.infoGrid}>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Заточка</span>
+            <span className={styles.infoValue}>+{relic.enhancementLevel}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Опыт</span>
+            <span className={styles.infoValue}>{relic.absorbExperience.toLocaleString('ru-RU')}</span>
+          </div>
+          <div className={styles.infoItem}>
+            <span className={styles.infoLabel}>Добавлено</span>
+            <span className={styles.infoValue}>{formatDate(relic.createdAt)}</span>
           </div>
         </div>
+
+        <div className={styles.divider} />
+
+        {/* История цен по похожим */}
+        <PriceHistoryChart relic={relic} />
       </div>
     </div>
   )

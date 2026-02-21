@@ -8,6 +8,8 @@ interface RelicCardProps {
   relic: RelicListItem
   /** Режим отображения */
   view?: 'grid' | 'list'
+  /** ID доп. атрибутов, по которым идёт фильтрация (для подсветки) */
+  highlightedAttributeIds?: Set<number>
 }
 
   /** Убирает суффикс "(N ур.)" из названия реликвии */
@@ -34,7 +36,7 @@ function getSoulLevelClass(level: number): string {
 }
 
 /** Карточка реликвии в каталоге */
-export function RelicCard({ relic, view = 'grid' }: RelicCardProps) {
+export function RelicCard({ relic, view = 'grid', highlightedAttributeIds }: RelicCardProps) {
   const def = relic.relicDefinition
   const displayName = cleanRelicName(def.name)
 
@@ -64,12 +66,18 @@ export function RelicCard({ relic, view = 'grid' }: RelicCardProps) {
           <span className={styles.attrName}>{relic.mainAttribute.attributeDefinition.name}</span>
           <span className={styles.attrValue}>{relic.mainAttribute.value}</span>
         </div>
-        {relic.additionalAttributes.map((attr, idx) => (
-          <div key={idx} className={styles.attribute}>
-            <span className={styles.attrName}>{attr.attributeDefinition.name}</span>
-            <span className={styles.attrValue}>{attr.value}</span>
-          </div>
-        ))}
+        {relic.additionalAttributes.length > 0 && (
+          <div className={styles.attrDivider} />
+        )}
+        {relic.additionalAttributes.map((attr, idx) => {
+          const isHighlighted = highlightedAttributeIds?.has(attr.attributeDefinition.id)
+          return (
+            <div key={idx} className={clsx(styles.attribute, isHighlighted && styles.highlightedAttr)}>
+              <span className={styles.attrName}>{attr.attributeDefinition.name}</span>
+              <span className={styles.attrValue}>{attr.value}</span>
+            </div>
+          )
+        })}
       </div>
 
       <div className={styles.footer}>

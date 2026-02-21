@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  position: relative;
 }
 
 .label {
@@ -20,6 +21,12 @@
   font-family: var(--font-family);
   cursor: pointer;
   transition: border-color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  text-align: left;
+  min-height: 42px;
 
   &:hover {
     border-color: var(--border-light);
@@ -29,4 +36,66 @@
     outline: none;
     border-color: var(--primary);
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--text-muted);
+}
+
+.arrow {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--space-xs);
+  list-style: none;
+  padding: var(--space-xs) 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.option {
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  &:hover {
+    background: var(--primary);
+    color: var(--text-on-primary, #fff);
+  }
+
+  &:focus-visible {
+    outline: none;
+    background: var(--primary);
+    color: var(--text-on-primary, #fff);
+  }
+}
+
+.optionSelected {
+  color: var(--primary);
+  font-weight: 600;
 }

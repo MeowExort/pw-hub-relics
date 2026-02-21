@@ -1,6 +1,7 @@
 import { RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@/shared/theme'
+import { CaptchaModal } from '@/shared/ui/CaptchaModal'
 import { router } from './router'
 
 /** Клиент React Query с настройками по умолчанию */
@@ -24,6 +25,7 @@ export function App() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <CaptchaModal />
       </QueryClientProvider>
     </ThemeProvider>
   )

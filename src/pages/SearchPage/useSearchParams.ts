@@ -2,6 +2,29 @@ import { useCallback, useMemo } from 'react'
 import { useSearchParams as useRouterSearchParams } from 'react-router-dom'
 import type { RelicSearchParams } from '@/shared/types'
 
+/** Маппинг полных ключей в короткие для сжатия URL */
+const KEY_TO_SHORT: Record<string, string> = {
+  serverId: 's',
+  soulType: 't',
+  race: 'r',
+  soulLevel: 'l',
+  slotTypeId: 'sl',
+  mainAttributeId: 'ma',
+  minPrice: 'p0',
+  maxPrice: 'p1',
+  additionalAttributes: 'aa',
+  sortBy: 'sb',
+  sortDirection: 'sd',
+  sortAttributeId: 'sa',
+  pageNumber: 'pn',
+  pageSize: 'ps',
+  minEnhancementLevel: 'e0',
+  maxEnhancementLevel: 'e1',
+  minAbsorbExperience: 'a0',
+  maxAbsorbExperience: 'a1',
+}
+
+
 const NUM_KEYS: (keyof RelicSearchParams)[] = [
   'soulType',
   'slotTypeId',
@@ -24,6 +47,13 @@ const STR_KEYS: (keyof RelicSearchParams)[] = [
   'sortBy',
   'sortDirection',
 ]
+
+/** Дефолтные значения, которые не нужно записывать в URL */
+const DEFAULTS: Record<string, any> = {
+  pageNumber: 1,
+  pageSize: 20,
+  sortDirection: 'desc',
+}
 
 /** Парсит число из строки или возвращает undefined */
 function parseNum(v: string | null): number | undefined {
@@ -59,20 +89,26 @@ export function useRelicSearchParams() {
   const params: RelicSearchParams = useMemo(() => {
     const result: RelicSearchParams = {}
     for (const key of NUM_KEYS) {
-      const val = parseNum(searchParams.get(key))
+      const shortKey = KEY_TO_SHORT[key] || key
+      // Поддержка как коротких, так и полных ключей для обратной совместимости
+      const val = parseNum(searchParams.get(shortKey) ?? searchParams.get(key))
       if (val !== undefined) {
         ;(result as Record<string, any>)[key] = val
       }
     }
 
     for (const key of STR_KEYS) {
-      const val = searchParams.get(key)
+      const shortKey = KEY_TO_SHORT[key] || key
+      const val = searchParams.get(shortKey) ?? searchParams.get(key)
       if (val !== null) {
         ;(result as Record<string, any>)[key] = val
       }
     }
 
-    const attrs = parseAdditionalAttributes(searchParams.get('additionalAttributes'))
+    const aaShort = KEY_TO_SHORT['additionalAttributes'] || 'additionalAttributes'
+    const attrs = parseAdditionalAttributes(
+      searchParams.get(aaShort) ?? searchParams.get('additionalAttributes'),
+    )
     if (attrs) {
       result.additionalAttributes = attrs
     }
@@ -85,23 +121,38 @@ export function useRelicSearchParams() {
 
   const setParams = useCallback(
     (patch: Partial<RelicSearchParams>) => {
-      const next = new URLSearchParams(searchParams)
-      for (const [key, value] of Object.entries(patch)) {
-        if (value === undefined || value === null || (Array.isArray(value) && value.length === 0)) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev)
+        for (const [key, value] of Object.entries(patch)) {
+          const shortKey = KEY_TO_SHORT[key] || key
+          // Удаляем старые полные ключи для обратной совместимости
           next.delete(key)
-        } else if (key === 'additionalAttributes') {
-          next.set(key, stringifyAdditionalAttributes(value as any[]))
-        } else {
-          next.set(key, String(value))
+          next.delete(shortKey)
+
+          if (value === undefined || value === null || (Array.isArray(value) && value.length === 0)) {
+            continue
+          }
+
+          // Не записываем дефолтные значения
+          if (key in DEFAULTS && value === DEFAULTS[key]) {
+            continue
+          }
+
+          if (key === 'additionalAttributes') {
+            next.set(shortKey, stringifyAdditionalAttributes(value as any[]))
+          } else {
+            next.set(shortKey, String(value))
+          }
         }
-      }
-      // Сброс на первую страницу при изменении фильтров
-      if (!('pageNumber' in patch)) {
-        next.set('pageNumber', '1')
-      }
-      setSearchParams(next)
+        // Сброс на первую страницу при изменении фильтров (не записываем pn=1, т.к. это дефолт)
+        if (!('pageNumber' in patch)) {
+          next.delete('pn')
+          next.delete('pageNumber')
+        }
+        return next
+      })
     },
-    [searchParams, setSearchParams],
+    [setSearchParams],
   )
 
   const resetParams = useCallback(() => {

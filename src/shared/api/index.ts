@@ -1,5 +1,6 @@
 export * from './client'
 export * from './auth'
+export * from './proxy'
 export * from './relics'
 export * from './dictionaries'
 export * from './notifications'

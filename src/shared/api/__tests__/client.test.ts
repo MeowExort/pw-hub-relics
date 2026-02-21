@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { buildQueryString, ApiError } from '../client'
+import { describe, it, expect, vi } from 'vitest'
+import { buildQueryString, ApiError, get } from '../client'
+
+// Мокаем глобальный fetch
+global.fetch = vi.fn()
 
 describe('buildQueryString', () => {
   it('возвращает пустую строку для пустого объекта', () => {
@@ -32,5 +35,24 @@ describe('ApiError', () => {
     expect(error.message).toBe('Не найдено')
     expect(error.name).toBe('ApiError')
     expect(error).toBeInstanceOf(Error)
+  })
+})
+
+describe('API Key', () => {
+  it('добавляет заголовок X-Api-Key во все запросы', async () => {
+    // Настраиваем мок ответа fetch
+    ;(global.fetch as any).mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ data: 'ok' }),
+    })
+
+    await get('/test')
+
+    // Проверяем вызов fetch
+    const [url, init] = (global.fetch as any).mock.calls[0]
+    expect(url).toBe('/test')
+    expect(init.headers).toHaveProperty('X-Api-Key')
+    expect(init.headers['X-Api-Key']).toBe('test_api_key_12345')
   })
 })
