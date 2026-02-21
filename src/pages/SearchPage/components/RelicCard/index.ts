@@ -1,0 +1,1 @@
+export { RelicCard } from './RelicCard'

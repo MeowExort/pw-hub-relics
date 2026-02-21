@@ -1,0 +1,91 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Варианты */
+.primary {
+  background: var(--primary);
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+}
+
+.secondary {
+  background: var(--card);
+  color: var(--text);
+  border-color: var(--border);
+
+  &:hover:not(:disabled) {
+    background: var(--card-hover);
+    border-color: var(--border-light);
+  }
+}
+
+.ghost {
+  background: transparent;
+  color: var(--text-secondary);
+
+  &:hover:not(:disabled) {
+    background: var(--card);
+    color: var(--text);
+  }
+}
+
+.danger {
+  background: var(--danger);
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+}
+
+/* Размеры */
+.sm {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  height: 28px;
+}
+
+.md {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  height: 36px;
+}
+
+.lg {
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--font-size-md);
+  height: 44px;
+}
+
+/* Лоадер внутри кнопки */
+.loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

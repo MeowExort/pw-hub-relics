@@ -1,0 +1,35 @@
+.toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--card);
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-md);
+
+  &:hover {
+    background: var(--card-hover);
+    color: var(--text);
+  }
+}
+
+.active {
+  background: var(--primary);
+  color: #fff;
+
+  &:hover {
+    background: var(--primary-hover);
+    color: #fff;
+  }
+}

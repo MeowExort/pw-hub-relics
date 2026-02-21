@@ -1,0 +1,1 @@
+export { RelicDetailPage } from './RelicDetailPage'

@@ -1,0 +1,146 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    background: var(--card-hover);
+    border-color: var(--border-light);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.listView {
+  flex-direction: row;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.soulLevel {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 1px var(--space-xs);
+  border-radius: var(--radius-sm);
+  margin-top: 2px;
+}
+
+.soulLevel1 {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.soulLevel2 {
+  color: #8080ff;
+  background: rgba(128, 128, 255, 0.1);
+}
+
+.soulLevel3 {
+  color: #833dbc;
+  background: rgba(131, 61, 188, 0.1);
+}
+
+.soulLevel4 {
+  color: #ffdc50;
+  background: rgba(255, 220, 80, 0.1);
+}
+
+.soulLevel5 {
+  color: #ff6000;
+  background: rgba(255, 96, 0, 0.1);
+}
+
+.enhancementBadge {
+  font-size: var(--font-size-xs);
+  padding: 1px var(--space-xs);
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.attributes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.attribute {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+}
+
+.attrName {
+  color: var(--text-secondary);
+}
+
+.attrValue {
+  color: var(--text);
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.mainAttr {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--border);
+}
+
+.price {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--success);
+  font-family: var(--font-mono);
+}
+
+.meta {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
