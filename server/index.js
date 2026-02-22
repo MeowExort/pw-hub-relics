@@ -289,9 +289,6 @@ function buildQueryString(params) {
 }
 
 // --- OG-теги ---
-
-const BOT_UA_PATTERN = /TelegramBot|Twitterbot|Discordbot|facebookexternalhit|LinkedInBot|Slackbot|vkShare|WhatsApp/i
-
 /** Экранирование HTML-атрибутов */
 function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -435,11 +432,13 @@ app.post('/api/proxy', async (req, res) => {
   }
 })
 
-// --- OG-теги для ботов мессенджеров ---
-app.get('/relics/:id', async (req, res, next) => {
-  const ua = req.headers['user-agent'] || ''
-  if (!BOT_UA_PATTERN.test(ua)) return next()
+// --- Путь к статике ---
+const distPath = path.resolve(__dirname, 'dist')
 
+// --- OG-теги для детальной карточки реликвии ---
+// Отдаём index.html с OG-тегами для всех запросов (без проверки UA),
+// чтобы превью работало в Telegram и других мессенджерах.
+app.get('/relics/:id', async (req, res, next) => {
   const relicId = req.params.id
   try {
     const apiRes = await fetch(`${API_TARGET}/api/relics/${relicId}`)
@@ -458,21 +457,19 @@ app.get('/relics/:id', async (req, res, next) => {
     ]
     const description = escapeHtml(descParts.join(' · '))
 
-    const html = `<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>${title} — PW Hub Relics</title>
-  <meta property="og:title" content="${title}" />
-  <meta property="og:description" content="${description}" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="${SITE_URL}/relics/${relicId}" />
-  ${def.iconUri ? `<meta property="og:image" content="${escapeHtml(def.iconUri)}" />` : ''}
-  <meta property="og:site_name" content="PW Hub Relics" />
-</head>
-<body></body>
-</html>`
+    // Читаем оригинальный index.html и вставляем OG-теги в <head>
+    const indexHtml = readFileSync(path.join(distPath, 'index.html'), 'utf-8')
+    const ogTags = [
+      `<title>${title} — PW Hub Relics</title>`,
+      `<meta property="og:title" content="${title}" />`,
+      `<meta property="og:description" content="${description}" />`,
+      `<meta property="og:type" content="website" />`,
+      `<meta property="og:url" content="${SITE_URL}/relics/${relicId}" />`,
+      def.iconUri ? `<meta property="og:image" content="${escapeHtml(def.iconUri)}" />` : '',
+      `<meta property="og:site_name" content="PW Hub Relics" />`,
+    ].filter(Boolean).join('\n  ')
 
+    const html = indexHtml.replace('</head>', `  ${ogTags}\n</head>`)
     res.set('Content-Type', 'text/html; charset=utf-8').send(html)
   } catch {
     next()
@@ -480,7 +477,6 @@ app.get('/relics/:id', async (req, res, next) => {
 })
 
 // --- Статика из dist/ ---
-const distPath = path.resolve(__dirname, 'dist')
 app.use(express.static(distPath))
 
 // SPA fallback — все остальные GET-запросы отдают index.html

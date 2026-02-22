@@ -602,10 +602,6 @@ function bffProxyPlugin(): Plugin {
     },
   }
 }
-
-/** User-Agent паттерны ботов мессенджеров */
-const BOT_UA_PATTERN = /TelegramBot|Twitterbot|Discordbot|facebookexternalhit|LinkedInBot|Slackbot|vkShare|WhatsApp/i
-
 /**
  * Vite-плагин: OG-теги для ботов мессенджеров.
  * Перехватывает запросы к /relics/:id от ботов и возвращает HTML с мета-тегами.
@@ -618,9 +614,6 @@ function ogTagsPlugin(): Plugin {
         const url = req.url || ''
         const match = url.match(/^\/relics\/([a-f0-9-]+)/i)
         if (!match) return next()
-
-        const ua = req.headers['user-agent'] || ''
-        if (!BOT_UA_PATTERN.test(ua)) return next()
 
         const relicId = match[1]
         try {
