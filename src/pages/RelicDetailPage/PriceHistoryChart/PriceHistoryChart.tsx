@@ -45,7 +45,7 @@ function formatPrice(value: number): string {
 /** Кастомный тултип графика */
 function ChartTooltip({ active, payload, label }: {
   active?: boolean
-  payload?: Array<{ value: number; dataKey: string }>
+  payload?: Array<{ value: number; dataKey: string; payload?: PriceTrendPoint }>
   label?: string
 }) {
   if (!active || !payload?.length || !label) return null

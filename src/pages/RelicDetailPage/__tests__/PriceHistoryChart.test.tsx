@@ -79,7 +79,8 @@ describe('PriceHistoryChart', () => {
     fireEvent.click(btn7d)
 
     // Проверяем что хук вызван с новыми параметрами (groupBy: 'day' для 7д)
-    const lastCall = mockUsePriceTrends.mock.calls.at(-1)!
+    const calls = mockUsePriceTrends.mock.calls
+    const lastCall = calls[calls.length - 1]!
     expect(lastCall[0].groupBy).toBe('day')
   })
 })
