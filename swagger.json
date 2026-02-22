@@ -692,6 +692,59 @@
         }
       }
     },
+    "/api/telegram/notifications/settings": {
+      "get": {
+        "tags": [
+          "Telegram"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Telegram"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNotificationSettingsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNotificationSettingsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNotificationSettingsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/telegram/notifications/test": {
+      "post": {
+        "tags": [
+          "Telegram"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/telegram/webhook": {
       "post": {
         "tags": [
@@ -2949,6 +3002,15 @@
         },
         "additionalProperties": false
       },
+      "NotificationFrequency": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "OrderInfo": {
         "type": "object",
         "properties": {
@@ -4078,6 +4140,27 @@
           },
           "criteria": {
             "$ref": "#/components/schemas/FilterCriteriaDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateNotificationSettingsRequest": {
+        "type": "object",
+        "properties": {
+          "frequency": {
+            "$ref": "#/components/schemas/NotificationFrequency"
+          },
+          "quietHoursEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "quietHoursStart": {
+            "type": "string",
+            "nullable": true
+          },
+          "quietHoursEnd": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

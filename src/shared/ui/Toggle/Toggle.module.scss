@@ -1,0 +1,40 @@
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border: none;
+  border-radius: 12px;
+  background: var(--border);
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: var(--border-light);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.checked {
+    background: var(--primary);
+
+    .thumb {
+      transform: translateX(20px);
+    }
+  }
+}
+
+.thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--text);
+  transition: transform var(--transition-fast);
+}

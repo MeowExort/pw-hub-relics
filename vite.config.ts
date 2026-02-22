@@ -315,7 +315,14 @@ const ACTION_ROUTE_MAP: Record<string, RouteInfo> = {
   [actionHash('getNotificationFilters')]: { method: 'GET', path: '/api/notifications/filters' },
   [actionHash('createNotificationFilter')]: { method: 'POST', path: '/api/notifications/filters' },
   [actionHash('deleteNotificationFilter')]: { method: 'DELETE', path: '/api/notifications/filters/:id' },
+  [actionHash('updateNotificationFilter')]: { method: 'PUT', path: '/api/notifications/filters/:id' },
+  [actionHash('toggleNotificationFilter')]: { method: 'PATCH', path: '/api/notifications/filters/:id/toggle' },
   [actionHash('generateTelegramLink')]: { method: 'POST', path: '/api/telegram/binding/generate-link' },
+  [actionHash('getTelegramBindingStatus')]: { method: 'GET', path: '/api/telegram/binding/status' },
+  [actionHash('deleteTelegramBinding')]: { method: 'DELETE', path: '/api/telegram/binding' },
+  [actionHash('getNotificationSettings')]: { method: 'GET', path: '/api/telegram/notifications/settings' },
+  [actionHash('updateNotificationSettings')]: { method: 'PUT', path: '/api/telegram/notifications/settings' },
+  [actionHash('sendTestNotification')]: { method: 'POST', path: '/api/telegram/notifications/test' },
   [actionHash('getPriceTrends')]: { method: 'GET', path: '/api/analytics/price-trends' },
 }
 
@@ -569,7 +576,7 @@ function bffProxyPlugin(): Plugin {
           if (route.method === 'GET') {
             // Параметры в query string
             finalTargetUrl = targetUrl + buildQueryString(remainingParams)
-          } else if (route.method === 'POST' || route.method === 'PUT') {
+          } else if (route.method === 'POST' || route.method === 'PUT' || route.method === 'PATCH') {
             // Параметры в теле запроса
             fetchOptions.body = JSON.stringify(remainingParams)
           }
@@ -696,7 +703,14 @@ export default defineConfig(({ command }) => ({
     __ACTION_GET_NOTIFICATION_FILTERS__: JSON.stringify(actionHash('getNotificationFilters')),
     __ACTION_CREATE_NOTIFICATION_FILTER__: JSON.stringify(actionHash('createNotificationFilter')),
     __ACTION_DELETE_NOTIFICATION_FILTER__: JSON.stringify(actionHash('deleteNotificationFilter')),
+    __ACTION_UPDATE_NOTIFICATION_FILTER__: JSON.stringify(actionHash('updateNotificationFilter')),
+    __ACTION_TOGGLE_NOTIFICATION_FILTER__: JSON.stringify(actionHash('toggleNotificationFilter')),
     __ACTION_GENERATE_TELEGRAM_LINK__: JSON.stringify(actionHash('generateTelegramLink')),
+    __ACTION_GET_TELEGRAM_BINDING_STATUS__: JSON.stringify(actionHash('getTelegramBindingStatus')),
+    __ACTION_DELETE_TELEGRAM_BINDING__: JSON.stringify(actionHash('deleteTelegramBinding')),
+    __ACTION_GET_NOTIFICATION_SETTINGS__: JSON.stringify(actionHash('getNotificationSettings')),
+    __ACTION_UPDATE_NOTIFICATION_SETTINGS__: JSON.stringify(actionHash('updateNotificationSettings')),
+    __ACTION_SEND_TEST_NOTIFICATION__: JSON.stringify(actionHash('sendTestNotification')),
     __ACTION_GET_PRICE_TRENDS__: JSON.stringify(actionHash('getPriceTrends')),
     __SIGNING_SECRET__: JSON.stringify(signingSecret),
   },

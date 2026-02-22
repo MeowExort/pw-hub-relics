@@ -16,6 +16,108 @@
   color: var(--text);
 }
 
+// === Секции ===
+
+.section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sectionDesc {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+// === Telegram ===
+
+.telegramBound {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.telegramStatus {
+  font-size: var(--font-size-sm);
+  color: var(--text);
+}
+
+.telegramActions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.telegramUnbound {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.telegramLink {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.testSuccess {
+  font-size: var(--font-size-xs);
+  color: var(--success, #22c55e);
+}
+
+// === Настройки уведомлений ===
+
+.settingsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.settingLabel {
+  font-size: var(--font-size-sm);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.quietHours {
+  display: flex;
+  gap: var(--space-md);
+  padding-left: var(--space-md);
+}
+
+.timeInputGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.timeLabel {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+// === Список подписок ===
+
 .list {
   display: flex;
   flex-direction: column;
@@ -30,17 +132,30 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), opacity var(--transition-fast);
 
   &:hover {
     border-color: var(--border-light);
   }
 }
 
+.cardInactive {
+  opacity: 0.6;
+}
+
+.cardLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+  min-width: 0;
+}
+
 .cardInfo {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  min-width: 0;
 }
 
 .cardName {
@@ -57,7 +172,33 @@
 .cardActions {
   display: flex;
   gap: var(--space-sm);
+  flex-shrink: 0;
 }
+
+// === Превью фильтра ===
+
+.preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.previewTag {
+  font-size: var(--font-size-xs);
+  background: var(--bg);
+  color: var(--text-secondary);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.previewEmpty {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+// === Пустые состояния ===
 
 .empty {
   text-align: center;
@@ -77,41 +218,23 @@
   color: var(--danger);
 }
 
-.telegramSection {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-.telegramTitle {
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  color: var(--text);
-}
-
-.telegramDesc {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-}
-
-.telegramLink {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 500;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
+// === Модалки ===
 
 .modalBody {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+}
+
+.modalHint {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.editPreviewLabel {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .input {

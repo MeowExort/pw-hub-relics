@@ -123,13 +123,55 @@ export interface CreateFilterRequest {
   criteria: FilterCriteriaDto
 }
 
+/** Запрос на обновление фильтра уведомлений */
+export interface UpdateFilterRequest {
+  name: string
+  criteria: FilterCriteriaDto
+}
+
+/** Запрос на переключение активности фильтра */
+export interface ToggleFilterRequest {
+  isEnabled: boolean
+}
+
 /** Фильтр уведомлений */
 export interface NotificationFilter {
   id: string
   name: string
   criteria: FilterCriteriaDto
-  isActive: boolean
+  isEnabled: boolean
   createdAt: string
+  updatedAt: string
+}
+
+/** Частота уведомлений: 0 — мгновенно, 1 — раз в час, 2 — раз в день */
+export enum NotificationFrequency {
+  Instant = 0,
+  Hourly = 1,
+  Daily = 2,
+}
+
+/** Настройки уведомлений */
+export interface NotificationSettings {
+  frequency: NotificationFrequency
+  quietHoursEnabled: boolean
+  quietHoursStart: string | null
+  quietHoursEnd: string | null
+}
+
+/** Запрос на обновление настроек уведомлений */
+export interface UpdateNotificationSettingsRequest {
+  frequency?: NotificationFrequency
+  quietHoursEnabled?: boolean | null
+  quietHoursStart?: string | null
+  quietHoursEnd?: string | null
+}
+
+/** Статус привязки Telegram */
+export interface TelegramBindingStatus {
+  isLinked: boolean
+  telegramUsername?: string | null
+  linkedAt?: string | null
 }
 
 /** Сервер */

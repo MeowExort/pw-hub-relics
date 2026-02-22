@@ -14,7 +14,14 @@ declare const __ACTION_GET_ENHANCEMENT_CURVE__: string
 declare const __ACTION_GET_NOTIFICATION_FILTERS__: string
 declare const __ACTION_CREATE_NOTIFICATION_FILTER__: string
 declare const __ACTION_DELETE_NOTIFICATION_FILTER__: string
+declare const __ACTION_UPDATE_NOTIFICATION_FILTER__: string
+declare const __ACTION_TOGGLE_NOTIFICATION_FILTER__: string
 declare const __ACTION_GENERATE_TELEGRAM_LINK__: string
+declare const __ACTION_GET_TELEGRAM_BINDING_STATUS__: string
+declare const __ACTION_DELETE_TELEGRAM_BINDING__: string
+declare const __ACTION_GET_NOTIFICATION_SETTINGS__: string
+declare const __ACTION_UPDATE_NOTIFICATION_SETTINGS__: string
+declare const __ACTION_SEND_TEST_NOTIFICATION__: string
 declare const __ACTION_GET_PRICE_TRENDS__: string
 
 /** Секрет для HMAC-подписи запросов */

@@ -1,6 +1,9 @@
-import { useState, useMemo } from 'react'
-import { Spinner, Pagination, Select } from '@/shared/ui'
+import { useState, useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Spinner, Pagination, Select, Button } from '@/shared/ui'
 import { useRelicsSearch, useDictionaries } from '@/shared/hooks'
+import { isAuthenticated } from '@/shared/api/auth'
+import type { FilterCriteriaDto } from '@/shared/types'
 import { useRelicSearchParams } from './useSearchParams'
 import { SearchFilters } from './components/SearchFilters'
 import { RelicCard } from './components/RelicCard'
@@ -29,6 +32,25 @@ export function SearchPage() {
   const { attributes } = useDictionaries()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const navigate = useNavigate()
+  const authenticated = isAuthenticated()
+
+  /** Подписаться на текущий фильтр — переход на страницу подписок с критериями */
+  const handleSubscribe = useCallback(() => {
+    const criteria: FilterCriteriaDto = {}
+    if (params.serverId != null) criteria.serverId = params.serverId
+    if (params.soulType != null) criteria.soulType = params.soulType
+    if (params.race != null) criteria.race = params.race
+    if (params.soulLevel != null) criteria.soulLevel = params.soulLevel
+    if (params.slotTypeId != null) criteria.slotTypeId = params.slotTypeId
+    if (params.mainAttributeId != null) criteria.mainAttributeId = params.mainAttributeId
+    if (params.minPrice != null) criteria.minPrice = params.minPrice
+    if (params.maxPrice != null) criteria.maxPrice = params.maxPrice
+    if (params.additionalAttributes?.length) {
+      criteria.requiredAdditionalAttributeIds = params.additionalAttributes.map((a: any) => a.id)
+    }
+    navigate('/subscriptions', { state: { criteria } })
+  }, [params, navigate])
 
   const activeFiltersCount = useMemo(() => countActiveFilters(params), [params])
 
@@ -63,6 +85,11 @@ export function SearchPage() {
             )}
             <span className={styles.filtersArrow}>{filtersOpen ? '▲' : '▼'}</span>
           </button>
+          {authenticated && (
+            <Button variant="secondary" size="sm" onClick={handleSubscribe}>
+              🔔 Подписаться на фильтр
+            </Button>
+          )}
           <ViewToggle value={view} onChange={setView} />
         </div>
       </div>

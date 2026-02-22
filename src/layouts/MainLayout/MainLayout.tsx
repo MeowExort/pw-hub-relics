@@ -25,6 +25,12 @@ export function MainLayout() {
                 Поиск
               </NavLink>
               <NavLink
+                to="/subscriptions"
+                className={({ isActive }) => clsx(styles.navLink, isActive && styles.active)}
+              >
+                Подписки
+              </NavLink>
+              <NavLink
                 to="/analytics"
                 className={({ isActive }) => clsx(styles.navLink, isActive && styles.active)}
               >
