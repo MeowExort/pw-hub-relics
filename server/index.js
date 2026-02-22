@@ -237,7 +237,15 @@ const ACTION_ROUTE_MAP = {
   [actionHash('getNotificationFilters')]: { method: 'GET', path: '/api/notifications/filters' },
   [actionHash('createNotificationFilter')]: { method: 'POST', path: '/api/notifications/filters' },
   [actionHash('deleteNotificationFilter')]: { method: 'DELETE', path: '/api/notifications/filters/:id' },
+  [actionHash('updateNotificationFilter')]: { method: 'PUT', path: '/api/notifications/filters/:id' },
+  [actionHash('toggleNotificationFilter')]: { method: 'PATCH', path: '/api/notifications/filters/:id/toggle' },
   [actionHash('generateTelegramLink')]: { method: 'POST', path: '/api/telegram/binding/generate-link' },
+  [actionHash('getTelegramBindingStatus')]: { method: 'GET', path: '/api/telegram/binding/status' },
+  [actionHash('deleteTelegramBinding')]: { method: 'DELETE', path: '/api/telegram/binding' },
+  [actionHash('getNotificationSettings')]: { method: 'GET', path: '/api/telegram/notifications/settings' },
+  [actionHash('updateNotificationSettings')]: { method: 'PUT', path: '/api/telegram/notifications/settings' },
+  [actionHash('sendTestNotification')]: { method: 'POST', path: '/api/telegram/notifications/test' },
+  [actionHash('getPriceTrends')]: { method: 'GET', path: '/api/analytics/price-trends' },
 }
 
 // --- Утилиты маршрутизации ---
