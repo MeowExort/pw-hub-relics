@@ -440,9 +440,17 @@ const distPath = path.resolve(__dirname, 'dist')
 // чтобы превью работало в Telegram и других мессенджерах.
 app.get('/relics/:id', async (req, res, next) => {
   const relicId = req.params.id
+  console.log(`[BFF OG] Запрос OG-тегов для реликвии id=${relicId}`)
   try {
-    const apiRes = await fetch(`${API_TARGET}/api/relics/${relicId}`)
-    if (!apiRes.ok) return next()
+    const apiRes = await fetch(`${API_TARGET}/api/relics/${relicId}`, {
+      headers: {
+        ...(API_KEY ? { 'X-Api-Key': API_KEY } : {}),
+      },
+    })
+    if (!apiRes.ok) {
+      console.log(`[BFF OG] ❌ API вернул ${apiRes.status} для id=${relicId}`)
+      return next()
+    }
 
     const relic = await apiRes.json()
     const def = relic.relicDefinition
