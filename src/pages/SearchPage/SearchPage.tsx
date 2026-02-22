@@ -44,8 +44,8 @@ export function SearchPage() {
     if (params.soulLevel != null) criteria.soulLevel = params.soulLevel
     if (params.slotTypeId != null) criteria.slotTypeId = params.slotTypeId
     if (params.mainAttributeId != null) criteria.mainAttributeId = params.mainAttributeId
-    if (params.minPrice != null) criteria.minPrice = params.minPrice
-    if (params.maxPrice != null) criteria.maxPrice = params.maxPrice
+    if (params.minPrice != null) criteria.minPrice = params.minPrice * 100
+    if (params.maxPrice != null) criteria.maxPrice = params.maxPrice * 100
     if (params.additionalAttributes?.length) {
       criteria.requiredAdditionalAttributeIds = params.additionalAttributes.map((a: any) => a.id)
     }
