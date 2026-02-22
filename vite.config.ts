@@ -1,9 +1,9 @@
-import { defineConfig, type Plugin } from 'vite'
+import {defineConfig, type Plugin} from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { createHash } from 'crypto'
-import { readFileSync } from 'fs'
-import type { IncomingMessage, ServerResponse } from 'http'
+import {createHash} from 'crypto'
+import {mkdirSync, readFileSync, writeFileSync} from 'fs'
+import type {IncomingMessage, ServerResponse} from 'http'
 
 /**
  * Загружает переменные окружения из .env файла.
@@ -19,8 +19,7 @@ function loadDotEnv(): Record<string, string> {
       const eqIndex = trimmed.indexOf('=')
       if (eqIndex === -1) continue
       const key = trimmed.slice(0, eqIndex).trim()
-      const value = trimmed.slice(eqIndex + 1).trim()
-      env[key] = value
+        env[key] = trimmed.slice(eqIndex + 1).trim()
     }
   } catch {
     // .env файл не найден — не критично
@@ -667,8 +666,8 @@ function ogTagsPlugin(): Plugin {
 }
 
 /**
- * Vite-плагин: выводит BUILD_SALT и SIGNING_SECRET при сборке.
- * Эти значения нужно передать BFF-серверу через переменные окружения.
+ * Vite-плагин: выводит BUILD_SALT и SIGNING_SECRET при сборке
+ * и сохраняет их в dist/.build-env для BFF-сервера.
  */
 function buildInfoPlugin(): Plugin {
   return {
@@ -676,6 +675,15 @@ function buildInfoPlugin(): Plugin {
     buildStart() {
       console.log(`\n[Build Info] BUILD_SALT=${buildSalt}`)
       console.log(`[Build Info] SIGNING_SECRET=${signingSecret}\n`)
+    },
+    closeBundle() {
+      const distDir = path.resolve(__dirname, 'dist')
+      mkdirSync(distDir, { recursive: true })
+      writeFileSync(
+        path.join(distDir, '.build-env'),
+        `BUILD_SALT=${buildSalt}\nSIGNING_SECRET=${signingSecret}\n`,
+      )
+      console.log(`[Build Info] Сохранено в dist/.build-env`)
     },
   }
 }

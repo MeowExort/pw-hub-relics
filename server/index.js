@@ -12,22 +12,47 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// --- Загрузка build-env (значения, вшитые при сборке фронтенда) ---
+
+/**
+ * Читает .build-env файл, созданный при сборке Vite.
+ * Содержит BUILD_SALT и SIGNING_SECRET, совпадающие с клиентским кодом.
+ */
+function loadBuildEnv() {
+  const env = {}
+  try {
+    const content = readFileSync(path.resolve(__dirname, 'dist', '.build-env'), 'utf-8')
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) continue
+      const eqIndex = trimmed.indexOf('=')
+      if (eqIndex === -1) continue
+      env[trimmed.slice(0, eqIndex).trim()] = trimmed.slice(eqIndex + 1).trim()
+    }
+  } catch {
+    // Файл не найден — используем переменные окружения
+  }
+  return env
+}
+
+const buildEnv = loadBuildEnv()
+
 // --- Конфигурация ---
 
 const PORT = parseInt(process.env.PORT || '3000', 10)
 const API_TARGET = process.env.API_TARGET || 'https://api.relics.pw-hub.ru'
 const HCAPTCHA_SECRET = process.env.HCAPTCHA_SECRET || ''
 const SITE_URL = process.env.SITE_URL || 'https://relics.pw-hub.ru'
+const API_KEY = process.env.VITE_API_KEY || process.env.API_KEY || ''
 
 /**
  * Соль для генерации хешей действий.
- * В production берётся из переменной окружения BUILD_SALT,
- * которая задаётся при сборке фронта (совпадает с buildSalt в vite.config.ts).
+ * Приоритет: env → .build-env → случайное значение (fallback).
  */
-const buildSalt = process.env.BUILD_SALT || Date.now().toString(36)
+const buildSalt = process.env.BUILD_SALT || buildEnv.BUILD_SALT || Date.now().toString(36)
 
 /** Секрет подписи запросов (должен совпадать с клиентским) */
-const signingSecret = process.env.SIGNING_SECRET || ''
+const signingSecret = process.env.SIGNING_SECRET || buildEnv.SIGNING_SECRET || ''
 
 // --- Утилиты ---
 
@@ -376,13 +401,14 @@ app.post('/api/proxy', async (req, res) => {
       method: route.method,
       headers: {
         'Content-Type': 'application/json',
+        ...(API_KEY ? { 'X-Api-Key': API_KEY } : {}),
         ...(req.headers.authorization ? { Authorization: req.headers.authorization } : {}),
       },
     }
 
     if (route.method === 'GET') {
       targetUrl += buildQueryString(remainingParams)
-    } else if (route.method === 'POST' || route.method === 'PUT') {
+    } else if (route.method === 'POST' || route.method === 'PUT' || route.method === 'PATCH') {
       fetchOptions.body = JSON.stringify(remainingParams)
     }
 
@@ -460,4 +486,6 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`[BFF] API_TARGET=${API_TARGET}`)
   console.log(`[BFF] HCAPTCHA_SECRET=${HCAPTCHA_SECRET ? 'задан' : 'не задан'}`)
   console.log(`[BFF] BUILD_SALT=${buildSalt}`)
+  console.log(`[BFF] SIGNING_SECRET=${signingSecret ? 'задан' : 'не задан'}`)
+  console.log(`[BFF] API_KEY=${API_KEY ? 'задан' : 'не задан'}`)
 })
