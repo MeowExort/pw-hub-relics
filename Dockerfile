@@ -48,6 +48,7 @@ COPY --from=build /app/dist ./dist
 ENV PORT=3000
 ENV API_TARGET=https://api.relics.pw-hub.ru
 ENV SITE_URL=https://relics.pw-hub.ru
+ENV HCAPTCHA_SECRET=""
 ENV NODE_ENV=production
 
 EXPOSE 3000
