@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnalyticsFilters } from '../AnalyticsFilters';
@@ -7,7 +7,7 @@ import React from 'react';
 
 vi.mock('@/shared/api/dictionaries', () => ({
   getServers: vi.fn(),
-  getRelicDefinitions: vi.fn(),
+  getSlotTypes: vi.fn(),
   getAttributes: vi.fn(),
 }));
 
@@ -23,20 +23,34 @@ const renderWithProviders = (ui: React.ReactElement) => {
 const defaultProps = {
   serverId: undefined as number | undefined,
   onServerChange: vi.fn(),
-  relicDefinitionId: undefined as number | undefined,
-  onRelicDefinitionChange: vi.fn(),
   period: '30d' as const,
   onPeriodChange: vi.fn(),
   soulLevel: undefined as number | undefined,
   onSoulLevelChange: vi.fn(),
   soulType: undefined as number | undefined,
   onSoulTypeChange: vi.fn(),
+  slotTypeId: undefined as number | undefined,
+  onSlotTypeIdChange: vi.fn(),
+  race: undefined as number | undefined,
+  onRaceChange: vi.fn(),
   groupBy: undefined as 'hour' | 'day' | 'week' | undefined,
   onGroupByChange: vi.fn(),
-  mainAttribute: undefined as { id: number; minValue?: number | null; maxValue?: number | null } | undefined,
-  onMainAttributeChange: vi.fn(),
+  mainAttributeIds: undefined as number[] | undefined,
+  onMainAttributeIdsChange: vi.fn(),
   additionalAttributes: [] as { id: number; minValue?: number | null; maxValue?: number | null }[],
   onAdditionalAttributesChange: vi.fn(),
+  minPrice: undefined as number | undefined,
+  maxPrice: undefined as number | undefined,
+  onMinPriceChange: vi.fn(),
+  onMaxPriceChange: vi.fn(),
+  minEnhancementLevel: undefined as number | undefined,
+  maxEnhancementLevel: undefined as number | undefined,
+  onMinEnhancementLevelChange: vi.fn(),
+  onMaxEnhancementLevelChange: vi.fn(),
+  minAbsorbExperience: undefined as number | undefined,
+  maxAbsorbExperience: undefined as number | undefined,
+  onMinAbsorbExperienceChange: vi.fn(),
+  onMaxAbsorbExperienceChange: vi.fn(),
 };
 
 describe('AnalyticsFilters', () => {
@@ -46,8 +60,9 @@ describe('AnalyticsFilters', () => {
       { id: 1, name: 'Сервер 1' },
       { id: 2, name: 'Сервер 2' },
     ]);
-    (dictionariesApi.getRelicDefinitions as any).mockResolvedValue([
-      { id: 10, name: 'Клинок Бури', soulType: 1, slotTypeId: 1 },
+    (dictionariesApi.getSlotTypes as any).mockResolvedValue([
+      { id: 1, name: 'Оружие' },
+      { id: 2, name: 'Броня' },
     ]);
     (dictionariesApi.getAttributes as any).mockResolvedValue([
       { id: 1, name: 'Сила' },
@@ -62,13 +77,6 @@ describe('AnalyticsFilters', () => {
     });
   });
 
-  it('рендерит фильтр типа реликвии', async () => {
-    renderWithProviders(<AnalyticsFilters {...defaultProps} />);
-    await waitFor(() => {
-      expect(screen.getByText('Тип реликвии')).toBeDefined();
-    });
-  });
-
   it('рендерит фильтр уровня души', async () => {
     renderWithProviders(<AnalyticsFilters {...defaultProps} />);
     expect(screen.getByText('Уровень души')).toBeDefined();
@@ -77,6 +85,16 @@ describe('AnalyticsFilters', () => {
   it('рендерит фильтр типа души', async () => {
     renderWithProviders(<AnalyticsFilters {...defaultProps} />);
     expect(screen.getByText('Тип души')).toBeDefined();
+  });
+
+  it('рендерит фильтр типа слота', async () => {
+    renderWithProviders(<AnalyticsFilters {...defaultProps} />);
+    expect(screen.getByText('Тип слота')).toBeDefined();
+  });
+
+  it('рендерит фильтр расы', async () => {
+    renderWithProviders(<AnalyticsFilters {...defaultProps} />);
+    expect(screen.getByText('Раса')).toBeDefined();
   });
 
   it('рендерит фильтр группировки', async () => {
@@ -142,18 +160,25 @@ describe('AnalyticsFilters', () => {
     expect(defaultProps.onGroupByChange).toHaveBeenCalledWith('day');
   });
 
-  it('вызывает onMainAttributeChange при выборе основного атрибута', async () => {
+  it('вызывает onMainAttributeIdsChange при выборе основного атрибута', async () => {
     renderWithProviders(<AnalyticsFilters {...defaultProps} />);
 
-    const mainAttrBtn = screen.getByRole('button', { name: /Основной атрибут/i });
+    // Ждём загрузки атрибутов и открываем MultiSelect
+    await waitFor(() => {
+      expect(screen.getByText('Основной атрибут')).toBeDefined();
+    });
+    const mainAttrBtn = screen.getByText('Основной атрибут').closest('div')!.querySelector('button')!;
     fireEvent.click(mainAttrBtn);
 
     await waitFor(() => {
       expect(screen.getByText('Сила')).toBeDefined();
     });
-    fireEvent.click(screen.getByText('Сила'));
 
-    expect(defaultProps.onMainAttributeChange).toHaveBeenCalledWith({ id: 1, minValue: null, maxValue: null });
+    // MultiSelect использует чекбоксы
+    const checkbox = screen.getByText('Сила').closest('label')!.querySelector('input[type="checkbox"]')!;
+    fireEvent.click(checkbox);
+
+    expect(defaultProps.onMainAttributeIdsChange).toHaveBeenCalledWith([1]);
   });
 
   it('вызывает onPeriodChange при клике на кнопку периода', () => {

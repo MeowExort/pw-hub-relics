@@ -13,7 +13,7 @@ vi.mock('@/shared/api/relics', () => ({
 
 vi.mock('@/shared/api/dictionaries', () => ({
   getServers: vi.fn(),
-  getRelicDefinitions: vi.fn(),
+  getSlotTypes: vi.fn(),
   getAttributes: vi.fn(),
 }));
 
@@ -35,11 +35,13 @@ vi.mock('recharts', () => ({
 
 const MOCK_TRENDS = {
   filters: {
-    mainAttribute: null,
+    mainAttributes: null,
     additionalAttributes: null,
-    relicDefinition: null,
     soulLevel: null,
     soulType: null,
+    slotTypeId: null,
+    race: null,
+    serverId: null,
   },
   period: {
     start: '2026-03-01T00:00:00',
@@ -78,9 +80,9 @@ describe('AnalyticsPage', () => {
       { id: 1, name: 'Сервер 1' },
       { id: 2, name: 'Сервер 2' },
     ]);
-    (dictionariesApi.getRelicDefinitions as any).mockResolvedValue([
-      { id: 10, name: 'Туманная цепь', soulType: 1, slotTypeId: 1 },
-      { id: 20, name: 'Белокрылый оттиск', soulType: 2, slotTypeId: 2 },
+    (dictionariesApi.getSlotTypes as any).mockResolvedValue([
+      { id: 1, name: 'Оружие' },
+      { id: 2, name: 'Броня' },
     ]);
     (dictionariesApi.getAttributes as any).mockResolvedValue([
       { id: 1, name: 'Сила' },
@@ -95,13 +97,13 @@ describe('AnalyticsPage', () => {
     expect(screen.getByText(/тренды и динамика/i)).toBeDefined();
   });
 
-  it('отображает фильтры: сервер, тип реликвии, период', async () => {
+  it('отображает фильтры: сервер, тип слота, период', async () => {
     renderWithProviders(<AnalyticsPage />);
 
     await waitFor(() => {
       expect(screen.getByText('Сервер')).toBeDefined();
     });
-    expect(screen.getByText('Тип реликвии')).toBeDefined();
+    expect(screen.getByText('Тип слота')).toBeDefined();
     // Кнопки периодов
     expect(screen.getByText('7д')).toBeDefined();
     expect(screen.getByText('30д')).toBeDefined();
@@ -110,10 +112,13 @@ describe('AnalyticsPage', () => {
   it('загружает и отображает график после выбора сервера', async () => {
     renderWithProviders(<AnalyticsPage />);
 
-    // Выбираем сервер
-    const serverSelect = screen.getByRole('button', { name: /Сервер/i });
-    fireEvent.click(serverSelect);
+    // Ждём загрузки серверов
+    await waitFor(() => {
+      expect(dictionariesApi.getServers).toHaveBeenCalled();
+    });
 
+    // Открываем dropdown и выбираем сервер
+    fireEvent.click(screen.getByRole('button', { name: /Сервер/i }));
     await waitFor(() => {
       expect(screen.getByText('Сервер 1')).toBeDefined();
     });
@@ -127,11 +132,17 @@ describe('AnalyticsPage', () => {
   it('отображает статистику рынка', async () => {
     renderWithProviders(<AnalyticsPage />);
 
-    // Выбираем сервер для загрузки данных
-    const serverSelect = screen.getByRole('button', { name: /Сервер/i });
-    fireEvent.click(serverSelect);
-    await waitFor(() => expect(screen.getByText('Сервер 1')).toBeDefined());
-    fireEvent.click(screen.getByText('Сервер 1'));
+    // Ждём загрузки серверов
+    await waitFor(() => {
+      expect(dictionariesApi.getServers).toHaveBeenCalled();
+    });
+
+    // Открываем dropdown и выбираем сервер
+    fireEvent.click(screen.getByRole('button', { name: /Сервер/i }));
+    await waitFor(() => {
+      expect(screen.getAllByText('Сервер 1').length).toBeGreaterThan(0);
+    });
+    fireEvent.click(screen.getAllByText('Сервер 1')[0]);
 
     await waitFor(() => {
       expect(screen.getByText('Средняя цена')).toBeDefined();

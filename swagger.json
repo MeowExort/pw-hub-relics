@@ -305,7 +305,7 @@
         ],
         "parameters": [
           {
-            "name": "MainAttribute.Id",
+            "name": "SoulType",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -313,7 +313,7 @@
             }
           },
           {
-            "name": "MainAttribute.MinValue",
+            "name": "SlotTypeId",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -321,25 +321,7 @@
             }
           },
           {
-            "name": "MainAttribute.MaxValue",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "AdditionalAttributes",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/AttributeFilterDto"
-              }
-            }
-          },
-          {
-            "name": "RelicDefinitionId",
+            "name": "Race",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -355,7 +337,76 @@
             }
           },
           {
-            "name": "SoulType",
+            "name": "MainAttributeIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "AdditionalAttributes",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PriceTrendAttributeFilterDto"
+              }
+            }
+          },
+          {
+            "name": "MinPrice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "MaxPrice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "ServerId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "MinEnhancementLevel",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "MaxEnhancementLevel",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "MinAbsorbExperience",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "MaxAbsorbExperience",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -376,14 +427,6 @@
             "schema": {
               "type": "string",
               "format": "date-time"
-            }
-          },
-          {
-            "name": "ServerId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           },
           {
@@ -471,11 +514,14 @@
             }
           },
           {
-            "name": "MainAttributeId",
+            "name": "MainAttributeIds",
             "in": "query",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
             }
           },
           {
@@ -785,26 +831,6 @@
           },
           "mime_type": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AttributeFilterDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minValue": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "maxValue": {
-            "type": "integer",
-            "format": "int32",
             "nullable": true
           }
         },
@@ -1838,16 +1864,18 @@
             "format": "int32",
             "nullable": true
           },
-          "mainAttributeId": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "requiredAdditionalAttributeIds": {
+          "mainAttributeIds": {
             "type": "array",
             "items": {
               "type": "integer",
               "format": "int32"
+            },
+            "nullable": true
+          },
+          "additionalAttributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationAttributeFilterDto"
             },
             "nullable": true
           },
@@ -1862,6 +1890,26 @@
             "nullable": true
           },
           "serverId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "minEnhancementLevel": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxEnhancementLevel": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "minAbsorbExperience": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxAbsorbExperience": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -2971,6 +3019,21 @@
         },
         "additionalProperties": false
       },
+      "NotificationAttributeFilterDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "NotificationFrequency": {
         "enum": [
           0,
@@ -3274,6 +3337,21 @@
           },
           "order_info": {
             "$ref": "#/components/schemas/OrderInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PriceTrendAttributeFilterDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false

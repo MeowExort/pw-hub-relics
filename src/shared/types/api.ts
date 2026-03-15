@@ -78,8 +78,7 @@ export interface RelicSearchParams {
   slotTypeId?: number
   race?: number
   soulLevel?: number
-  mainAttributeId?: number
-  additionalAttributeIds?: number[]
+  mainAttributeIds?: number[]
   additionalAttributes?: AttributeFilterDto[]
   minPrice?: number
   maxPrice?: number
@@ -110,11 +109,15 @@ export interface FilterCriteriaDto {
   slotTypeId?: number | null
   race?: number | null
   soulLevel?: number | null
-  mainAttributeId?: number | null
-  requiredAdditionalAttributeIds?: number[] | null
+  mainAttributeIds?: number[] | null
+  additionalAttributes?: AttributeFilterDto[] | null
   minPrice?: number | null
   maxPrice?: number | null
   serverId?: number | null
+  minEnhancementLevel?: number | null
+  maxEnhancementLevel?: number | null
+  minAbsorbExperience?: number | null
+  maxAbsorbExperience?: number | null
 }
 
 /** Запрос на создание фильтра уведомлений */
@@ -211,13 +214,20 @@ export interface EnhancementCurvePoint {
 export interface PriceTrendsParams {
   startDate: string
   endDate: string
-  relicDefinitionId?: number
-  soulLevel?: number
   soulType?: number
-  serverId?: number
-  groupBy?: 'hour' | 'day' | 'week'
-  mainAttribute?: AttributeFilterDto
+  slotTypeId?: number
+  race?: number
+  soulLevel?: number
+  mainAttributeIds?: number[]
   additionalAttributes?: AttributeFilterDto[]
+  minPrice?: number
+  maxPrice?: number
+  serverId?: number
+  minEnhancementLevel?: number
+  maxEnhancementLevel?: number
+  minAbsorbExperience?: number
+  maxAbsorbExperience?: number
+  groupBy?: 'hour' | 'day' | 'week'
 }
 
 /** Точка данных ценового тренда */
@@ -237,11 +247,13 @@ export interface PriceTrendFilterRef {
 
 /** Блок применённых фильтров в ответе ценовых трендов */
 export interface PriceTrendsFilters {
-  mainAttribute: PriceTrendFilterRef | null
+  mainAttributes: PriceTrendFilterRef[] | null
   additionalAttributes: PriceTrendFilterRef[] | null
-  relicDefinition: PriceTrendFilterRef | null
   soulLevel: number | null
   soulType: number | null
+  slotTypeId: number | null
+  race: number | null
+  serverId: number | null
 }
 
 /** Период анализа */

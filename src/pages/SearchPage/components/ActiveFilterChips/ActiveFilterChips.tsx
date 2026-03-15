@@ -103,13 +103,14 @@ export function ActiveFilterChips({ params, onChange, onReset }: ActiveFilterChi
       })
     }
 
-    if (params.mainAttributeId) {
-      const attr = attributes.find((a) => a.id === params.mainAttributeId)
+    if (params.mainAttributeIds?.length) {
+      const names = params.mainAttributeIds
+        .map((id) => attributes.find((a) => a.id === id)?.name ?? `#${id}`)
       result.push({
-        key: 'mainAttributeId',
+        key: 'mainAttributeIds',
         label: 'Осн. атрибут',
-        value: attr?.name ?? String(params.mainAttributeId),
-        resetPatch: { mainAttributeId: undefined },
+        value: names.join(', '),
+        resetPatch: { mainAttributeIds: undefined },
       })
     }
 

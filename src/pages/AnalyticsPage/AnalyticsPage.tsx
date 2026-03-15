@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getPriceTrends } from '@/shared/api/relics';
 import { Spinner } from '@/shared/ui';
 import { AnalyticsFilters, type PeriodId } from './components/AnalyticsFilters';
 import { PriceChart } from './components/PriceChart';
 import { MarketStats } from './components/MarketStats';
-import type { AttributeFilterDto } from '@/shared/types';
+import { useAnalyticsSearchParams } from './useAnalyticsSearchParams';
 import styles from './AnalyticsPage.module.scss';
 
 /**
@@ -13,14 +13,7 @@ import styles from './AnalyticsPage.module.scss';
  * Модуль 3: Дашборд трендов, графики, фильтры.
  */
 export function AnalyticsPage() {
-  const [serverId, setServerId] = useState<number | undefined>(undefined);
-  const [relicDefinitionId, setRelicDefinitionId] = useState<number | undefined>(undefined);
-  const [period, setPeriod] = useState<PeriodId>('30d');
-  const [soulLevel, setSoulLevel] = useState<number | undefined>(undefined);
-  const [soulType, setSoulType] = useState<number | undefined>(undefined);
-  const [groupBy, setGroupBy] = useState<'hour' | 'day' | 'week' | undefined>(undefined);
-  const [mainAttribute, setMainAttribute] = useState<AttributeFilterDto | undefined>(undefined);
-  const [additionalAttributes, setAdditionalAttributes] = useState<AttributeFilterDto[]>([]);
+  const { params, setParams } = useAnalyticsSearchParams();
 
   const { startDate, endDate } = useMemo(() => {
     const end = new Date();
@@ -29,27 +22,40 @@ export function AnalyticsPage() {
       '7d': 7,
       '30d': 30
     };
-    start.setDate(start.getDate() - map[period]);
+    start.setDate(start.getDate() - map[params.period]);
     return {
       startDate: start.toISOString().split('T')[0],
       endDate: end.toISOString().split('T')[0],
     };
-  }, [period]);
+  }, [params.period]);
 
   const { data: response, isLoading, isError } = useQuery({
-    queryKey: ['priceTrends', serverId, relicDefinitionId, period, soulLevel, soulType, groupBy, mainAttribute, additionalAttributes],
+    queryKey: [
+      'priceTrends', params.serverId, params.period, params.soulLevel, params.soulType,
+      params.slotTypeId, params.race, params.groupBy, params.mainAttributeIds,
+      params.additionalAttributes, params.minPrice, params.maxPrice,
+      params.minEnhancementLevel, params.maxEnhancementLevel,
+      params.minAbsorbExperience, params.maxAbsorbExperience,
+    ],
     queryFn: () => getPriceTrends({
       startDate,
       endDate,
-      serverId,
-      relicDefinitionId,
-      soulLevel,
-      soulType,
-      groupBy,
-      mainAttribute,
-      additionalAttributes: additionalAttributes.length > 0 ? additionalAttributes : undefined,
+      serverId: params.serverId,
+      soulLevel: params.soulLevel,
+      soulType: params.soulType,
+      slotTypeId: params.slotTypeId,
+      race: params.race,
+      groupBy: params.groupBy,
+      mainAttributeIds: params.mainAttributeIds,
+      additionalAttributes: params.additionalAttributes.length > 0 ? params.additionalAttributes : undefined,
+      minPrice: params.minPrice,
+      maxPrice: params.maxPrice,
+      minEnhancementLevel: params.minEnhancementLevel,
+      maxEnhancementLevel: params.maxEnhancementLevel,
+      minAbsorbExperience: params.minAbsorbExperience,
+      maxAbsorbExperience: params.maxAbsorbExperience,
     }),
-    enabled: serverId !== undefined,
+    enabled: params.serverId !== undefined,
     staleTime: 60000,
   });
 
@@ -64,25 +70,39 @@ export function AnalyticsPage() {
 
       <div className={styles.content}>
         <AnalyticsFilters
-          serverId={serverId}
-          onServerChange={setServerId}
-          relicDefinitionId={relicDefinitionId}
-          onRelicDefinitionChange={setRelicDefinitionId}
-          period={period}
-          onPeriodChange={setPeriod}
-          soulLevel={soulLevel}
-          onSoulLevelChange={setSoulLevel}
-          soulType={soulType}
-          onSoulTypeChange={setSoulType}
-          groupBy={groupBy}
-          onGroupByChange={setGroupBy}
-          mainAttribute={mainAttribute}
-          onMainAttributeChange={setMainAttribute}
-          additionalAttributes={additionalAttributes}
-          onAdditionalAttributesChange={setAdditionalAttributes}
+          serverId={params.serverId}
+          onServerChange={(v) => setParams({ serverId: v })}
+          period={params.period}
+          onPeriodChange={(v) => setParams({ period: v })}
+          soulLevel={params.soulLevel}
+          onSoulLevelChange={(v) => setParams({ soulLevel: v })}
+          soulType={params.soulType}
+          onSoulTypeChange={(v) => setParams({ soulType: v })}
+          slotTypeId={params.slotTypeId}
+          onSlotTypeIdChange={(v) => setParams({ slotTypeId: v })}
+          race={params.race}
+          onRaceChange={(v) => setParams({ race: v })}
+          groupBy={params.groupBy}
+          onGroupByChange={(v) => setParams({ groupBy: v })}
+          mainAttributeIds={params.mainAttributeIds}
+          onMainAttributeIdsChange={(v) => setParams({ mainAttributeIds: v })}
+          additionalAttributes={params.additionalAttributes}
+          onAdditionalAttributesChange={(v) => setParams({ additionalAttributes: v })}
+          minPrice={params.minPrice}
+          maxPrice={params.maxPrice}
+          onMinPriceChange={(v) => setParams({ minPrice: v })}
+          onMaxPriceChange={(v) => setParams({ maxPrice: v })}
+          minEnhancementLevel={params.minEnhancementLevel}
+          maxEnhancementLevel={params.maxEnhancementLevel}
+          onMinEnhancementLevelChange={(v) => setParams({ minEnhancementLevel: v })}
+          onMaxEnhancementLevelChange={(v) => setParams({ maxEnhancementLevel: v })}
+          minAbsorbExperience={params.minAbsorbExperience}
+          maxAbsorbExperience={params.maxAbsorbExperience}
+          onMinAbsorbExperienceChange={(v) => setParams({ minAbsorbExperience: v })}
+          onMaxAbsorbExperienceChange={(v) => setParams({ maxAbsorbExperience: v })}
         />
 
-        {serverId === undefined ? (
+        {params.serverId === undefined ? (
           <div className={styles.placeholder}>
             <p>Выберите сервер для отображения аналитики</p>
           </div>

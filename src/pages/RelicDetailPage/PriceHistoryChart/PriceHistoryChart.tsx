@@ -95,13 +95,12 @@ export function PriceHistoryChart({ relic }: PriceHistoryChartProps) {
     const def = relic.relicDefinition
 
     return {
-      relicDefinitionId: def.id,
       soulType: def.soulType,
       soulLevel: def.soulLevel,
+      slotTypeId: def.slotType?.id,
+      race: def.race,
       serverId: relic.server.id,
-      mainAttribute: {
-        id: relic.mainAttribute.attributeDefinition.id,
-      },
+      mainAttributeIds: [relic.mainAttribute.attributeDefinition.id],
       additionalAttributes: relic.additionalAttributes.map((attr) => ({
         id: attr.attributeDefinition.id,
       })),

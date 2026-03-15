@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getServers, getRelicDefinitions, getAttributes } from '@/shared/api/dictionaries';
-import { Select } from '@/shared/ui';
+import { getServers, getSlotTypes, getAttributes } from '@/shared/api/dictionaries';
+import { Select, MultiSelect, PriceRangeInput } from '@/shared/ui';
 import { AdditionalAttributesFilter } from '@/pages/SearchPage/components/SearchFilters/AdditionalAttributesFilter/AdditionalAttributesFilter';
 import type { AttributeFilterDto } from '@/shared/types';
 import styles from './AnalyticsFilters.module.scss';
@@ -29,6 +29,16 @@ const SOUL_LEVELS = [
   { value: 5, label: '5 уровень' },
 ];
 
+/** Маппинг рас */
+const RACES = [
+  { value: 1, label: 'Люди' },
+  { value: 2, label: 'Зооморфы' },
+  { value: 3, label: 'Сиды' },
+  { value: 4, label: 'Амфибии' },
+  { value: 5, label: 'Древние' },
+  { value: 6, label: 'Тени' },
+];
+
 /** Варианты группировки */
 const GROUP_BY_OPTIONS = [
   { value: 'hour', label: 'По часам' },
@@ -41,10 +51,6 @@ interface AnalyticsFiltersProps {
   serverId?: number;
   /** Обработчик смены сервера */
   onServerChange: (id?: number) => void;
-  /** Выбранный тип реликвии */
-  relicDefinitionId?: number;
-  /** Обработчик смены типа реликвии */
-  onRelicDefinitionChange: (id?: number) => void;
   /** Выбранный период */
   period: PeriodId;
   /** Обработчик смены периода */
@@ -57,51 +63,97 @@ interface AnalyticsFiltersProps {
   soulType?: number;
   /** Обработчик смены типа души */
   onSoulTypeChange: (type?: number) => void;
+  /** ID типа слота */
+  slotTypeId?: number;
+  /** Обработчик смены типа слота */
+  onSlotTypeIdChange: (id?: number) => void;
+  /** Раса */
+  race?: number;
+  /** Обработчик смены расы */
+  onRaceChange: (race?: number) => void;
   /** Группировка данных */
   groupBy?: 'hour' | 'day' | 'week';
   /** Обработчик смены группировки */
   onGroupByChange: (groupBy?: 'hour' | 'day' | 'week') => void;
-  /** Основной атрибут */
-  mainAttribute?: AttributeFilterDto;
-  /** Обработчик смены основного атрибута */
-  onMainAttributeChange: (attr?: AttributeFilterDto) => void;
+  /** ID основных атрибутов */
+  mainAttributeIds?: number[];
+  /** Обработчик смены основных атрибутов */
+  onMainAttributeIdsChange: (ids?: number[]) => void;
   /** Дополнительные атрибуты */
   additionalAttributes: AttributeFilterDto[];
   /** Обработчик смены дополнительных атрибутов */
   onAdditionalAttributesChange: (attrs: AttributeFilterDto[]) => void;
+  /** Минимальная цена */
+  minPrice?: number;
+  /** Максимальная цена */
+  maxPrice?: number;
+  /** Обработчик смены диапазона цен */
+  onMinPriceChange: (v?: number) => void;
+  /** Обработчик смены максимальной цены */
+  onMaxPriceChange: (v?: number) => void;
+  /** Мин. уровень заточки */
+  minEnhancementLevel?: number;
+  /** Макс. уровень заточки */
+  maxEnhancementLevel?: number;
+  /** Обработчик смены мин. уровня заточки */
+  onMinEnhancementLevelChange: (v?: number) => void;
+  /** Обработчик смены макс. уровня заточки */
+  onMaxEnhancementLevelChange: (v?: number) => void;
+  /** Мин. опыт поглощения */
+  minAbsorbExperience?: number;
+  /** Макс. опыт поглощения */
+  maxAbsorbExperience?: number;
+  /** Обработчик смены мин. опыта поглощения */
+  onMinAbsorbExperienceChange: (v?: number) => void;
+  /** Обработчик смены макс. опыта поглощения */
+  onMaxAbsorbExperienceChange: (v?: number) => void;
 }
 
 /**
  * Панель фильтров аналитики.
- * Содержит выбор сервера, типа реликвии, уровня/типа души, группировки,
+ * Содержит выбор сервера, уровня/типа души, типа слота, расы, группировки,
  * основного и дополнительных атрибутов, а также временного периода.
  */
 export function AnalyticsFilters({
   serverId,
   onServerChange,
-  relicDefinitionId,
-  onRelicDefinitionChange,
   period,
   onPeriodChange,
   soulLevel,
   onSoulLevelChange,
   soulType,
   onSoulTypeChange,
+  slotTypeId,
+  onSlotTypeIdChange,
+  race,
+  onRaceChange,
   groupBy,
   onGroupByChange,
-  mainAttribute,
-  onMainAttributeChange,
+  mainAttributeIds,
+  onMainAttributeIdsChange,
   additionalAttributes,
   onAdditionalAttributesChange,
+  minPrice,
+  maxPrice,
+  onMinPriceChange,
+  onMaxPriceChange,
+  minEnhancementLevel,
+  maxEnhancementLevel,
+  onMinEnhancementLevelChange,
+  onMaxEnhancementLevelChange,
+  minAbsorbExperience,
+  maxAbsorbExperience,
+  onMinAbsorbExperienceChange,
+  onMaxAbsorbExperienceChange,
 }: AnalyticsFiltersProps) {
   const { data: servers } = useQuery({
     queryKey: ['servers'],
     queryFn: () => getServers(),
   });
 
-  const { data: relicDefs } = useQuery({
-    queryKey: ['relicDefinitions'],
-    queryFn: () => getRelicDefinitions(),
+  const { data: slotTypes } = useQuery({
+    queryKey: ['slotTypes'],
+    queryFn: () => getSlotTypes(),
   });
 
   const { data: attributes } = useQuery({
@@ -114,10 +166,7 @@ export function AnalyticsFilters({
     ...(servers?.map(s => ({ value: s.id.toString(), label: s.name })) || []),
   ];
 
-  const relicOptions = [
-    { value: '', label: 'Все реликвии' },
-    ...(relicDefs?.map(r => ({ value: r.id.toString(), label: r.name })) || []),
-  ];
+  const slotTypeOptions = slotTypes?.map(s => ({ value: s.id, label: s.name })) || [];
 
   const mainAttrOptions = attributes?.map(a => ({ value: a.id, label: a.name })) || [];
 
@@ -130,14 +179,6 @@ export function AnalyticsFilters({
             options={serverOptions}
             value={serverId?.toString() || ''}
             onChange={(val) => onServerChange(val ? Number(val) : undefined)}
-          />
-        </div>
-        <div className={styles.field}>
-          <Select
-            label="Тип реликвии"
-            options={relicOptions}
-            value={relicDefinitionId?.toString() || ''}
-            onChange={(val) => onRelicDefinitionChange(val ? Number(val) : undefined)}
           />
         </div>
         <div className={styles.field}>
@@ -158,6 +199,22 @@ export function AnalyticsFilters({
         </div>
         <div className={styles.field}>
           <Select
+            label="Тип слота"
+            options={slotTypeOptions}
+            value={slotTypeId}
+            onChange={(val) => onSlotTypeIdChange(val ? Number(val) : undefined)}
+          />
+        </div>
+        <div className={styles.field}>
+          <Select
+            label="Раса"
+            options={RACES}
+            value={race}
+            onChange={(val) => onRaceChange(val ? Number(val) : undefined)}
+          />
+        </div>
+        <div className={styles.field}>
+          <Select
             label="Группировка"
             options={GROUP_BY_OPTIONS}
             value={groupBy || ''}
@@ -165,11 +222,11 @@ export function AnalyticsFilters({
           />
         </div>
         <div className={styles.field}>
-          <Select
+          <MultiSelect
             label="Основной атрибут"
             options={mainAttrOptions}
-            value={mainAttribute?.id}
-            onChange={(val) => onMainAttributeChange(val ? { id: Number(val), minValue: null, maxValue: null } : undefined)}
+            value={mainAttributeIds ?? []}
+            onChange={(val) => onMainAttributeIdsChange(val.length > 0 ? val.map(Number) : undefined)}
           />
         </div>
         <div className={styles.field}>
@@ -177,6 +234,33 @@ export function AnalyticsFilters({
             attributes={attributes || []}
             value={additionalAttributes}
             onChange={onAdditionalAttributesChange}
+          />
+        </div>
+        <div className={styles.field}>
+          <PriceRangeInput
+            label="Цена"
+            min={minPrice?.toString() ?? ''}
+            max={maxPrice?.toString() ?? ''}
+            onMinChange={(v) => onMinPriceChange(v ? Number(v) : undefined)}
+            onMaxChange={(v) => onMaxPriceChange(v ? Number(v) : undefined)}
+          />
+        </div>
+        <div className={styles.field}>
+          <PriceRangeInput
+            label="Уровень заточки"
+            min={minEnhancementLevel?.toString() ?? ''}
+            max={maxEnhancementLevel?.toString() ?? ''}
+            onMinChange={(v) => onMinEnhancementLevelChange(v ? Number(v) : undefined)}
+            onMaxChange={(v) => onMaxEnhancementLevelChange(v ? Number(v) : undefined)}
+          />
+        </div>
+        <div className={styles.field}>
+          <PriceRangeInput
+            label="Опыт поглощения"
+            min={minAbsorbExperience?.toString() ?? ''}
+            max={maxAbsorbExperience?.toString() ?? ''}
+            onMinChange={(v) => onMinAbsorbExperienceChange(v ? Number(v) : undefined)}
+            onMaxChange={(v) => onMaxAbsorbExperienceChange(v ? Number(v) : undefined)}
           />
         </div>
       </div>

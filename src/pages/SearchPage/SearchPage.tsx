@@ -15,11 +15,12 @@ import styles from './SearchPage.module.scss'
 /** Подсчитывает количество активных фильтров */
 function countActiveFilters(params: Record<string, any>): number {
   const filterKeys = [
-    'serverId', 'soulType', 'race', 'soulLevel', 'slotTypeId', 'mainAttributeId',
+    'serverId', 'soulType', 'race', 'soulLevel', 'slotTypeId',
     'minPrice', 'maxPrice', 'minEnhancementLevel', 'maxEnhancementLevel',
     'minAbsorbExperience', 'maxAbsorbExperience',
   ]
   let count = filterKeys.filter((k) => params[k] != null).length
+  if (params.mainAttributeIds?.length) count++
   if (params.additionalAttributes?.length > 0) {
     count += params.additionalAttributes.length
   }
@@ -45,11 +46,15 @@ export function SearchPage() {
     if (params.race != null) criteria.race = params.race
     if (params.soulLevel != null) criteria.soulLevel = params.soulLevel
     if (params.slotTypeId != null) criteria.slotTypeId = params.slotTypeId
-    if (params.mainAttributeId != null) criteria.mainAttributeId = params.mainAttributeId
+    if (params.mainAttributeIds?.length) criteria.mainAttributeIds = params.mainAttributeIds
     if (params.minPrice != null) criteria.minPrice = params.minPrice * 100
     if (params.maxPrice != null) criteria.maxPrice = params.maxPrice * 100
+    if (params.minEnhancementLevel != null) criteria.minEnhancementLevel = params.minEnhancementLevel
+    if (params.maxEnhancementLevel != null) criteria.maxEnhancementLevel = params.maxEnhancementLevel
+    if (params.minAbsorbExperience != null) criteria.minAbsorbExperience = params.minAbsorbExperience
+    if (params.maxAbsorbExperience != null) criteria.maxAbsorbExperience = params.maxAbsorbExperience
     if (params.additionalAttributes?.length) {
-      criteria.requiredAdditionalAttributeIds = params.additionalAttributes.map((a: any) => a.id)
+      criteria.additionalAttributes = params.additionalAttributes
     }
     navigate('/subscriptions', { state: { criteria } })
   }, [params, navigate])

@@ -1,4 +1,4 @@
-import { Select, PriceRangeInput, Button } from '@/shared/ui'
+import { Select, MultiSelect, PriceRangeInput, Button } from '@/shared/ui'
 import { useDictionaries } from '@/shared/hooks'
 import type { RelicSearchParams } from '@/shared/types'
 import { AdditionalAttributesFilter } from './AdditionalAttributesFilter/AdditionalAttributesFilter'
@@ -81,11 +81,11 @@ export function SearchFilters({ params, onChange, onReset, onSubscribe }: Search
         onChange={(v) => onChange({ slotTypeId: v ? Number(v) : undefined })}
       />
 
-      <Select
+      <MultiSelect
         label="Основной атрибут"
         options={attributes.map((a) => ({ value: a.id, label: a.name }))}
-        value={params.mainAttributeId}
-        onChange={(v) => onChange({ mainAttributeId: v ? Number(v) : undefined })}
+        value={params.mainAttributeIds ?? []}
+        onChange={(v) => onChange({ mainAttributeIds: v.length > 0 ? v.map(Number) : undefined })}
       />
 
       <AdditionalAttributesFilter

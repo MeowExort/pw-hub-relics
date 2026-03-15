@@ -37,15 +37,26 @@ function FilterPreview({ criteria, servers, slotTypes, attributes }: {
     const st = slotTypes.find((x) => x.id === criteria.slotTypeId)
     if (st) parts.push(`Слот: ${st.name}`)
   }
-  if (criteria.mainAttributeId != null) {
-    const a = attributes.find((x) => x.id === criteria.mainAttributeId)
-    if (a) parts.push(`Осн. атрибут: ${a.name}`)
-  }
-  if (criteria.requiredAdditionalAttributeIds?.length) {
-    const names = criteria.requiredAdditionalAttributeIds
+  if (criteria.mainAttributeIds?.length) {
+    const names = criteria.mainAttributeIds
       .map((id) => attributes.find((x) => x.id === id)?.name ?? `#${id}`)
+    parts.push(`Осн. атрибут: ${names.join(', ')}`)
+  }
+  if (criteria.additionalAttributes?.length) {
+    const names = criteria.additionalAttributes
+      .map((a) => {
+        const name = attributes.find((x) => x.id === a.id)?.name ?? `#${a.id}`
+        const range: string[] = []
+        if (a.minValue != null) range.push(`от ${a.minValue}`)
+        if (a.maxValue != null) range.push(`до ${a.maxValue}`)
+        return range.length ? `${name} (${range.join(' ')})` : name
+      })
     parts.push(`Доп. атрибуты: ${names.join(', ')}`)
   }
+  if (criteria.minEnhancementLevel != null) parts.push(`Заточка от: +${criteria.minEnhancementLevel}`)
+  if (criteria.maxEnhancementLevel != null) parts.push(`Заточка до: +${criteria.maxEnhancementLevel}`)
+  if (criteria.minAbsorbExperience != null) parts.push(`Опыт от: ${criteria.minAbsorbExperience}`)
+  if (criteria.maxAbsorbExperience != null) parts.push(`Опыт до: ${criteria.maxAbsorbExperience}`)
   if (criteria.minPrice != null) parts.push(`Цена от: ${criteria.minPrice}`)
   if (criteria.maxPrice != null) parts.push(`Цена до: ${criteria.maxPrice}`)
 
