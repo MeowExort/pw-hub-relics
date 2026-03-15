@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LevelStepper } from '../LevelStepper';
-import React from 'react';
 
 describe('LevelStepper', () => {
   it('рендерит текущее значение', () => {

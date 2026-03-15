@@ -106,7 +106,7 @@ export function PriceHistoryChart({ relic }: PriceHistoryChartProps) {
       })),
       startDate: start.toISOString().split('T')[0],
       endDate: now.toISOString().split('T')[0],
-      groupBy: selectedPeriod.days <= 7 ? 'day' : 'week',
+      groupBy: selectedPeriod.days <= 7 ? 'day' as const : 'week' as const,
     }
   }, [relic, selectedPeriod.days])
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Recommendation } from '@/shared/types';
 import styles from './RecommendationCard.module.scss';

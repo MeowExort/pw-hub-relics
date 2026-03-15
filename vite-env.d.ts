@@ -23,6 +23,8 @@ declare const __ACTION_GET_NOTIFICATION_SETTINGS__: string
 declare const __ACTION_UPDATE_NOTIFICATION_SETTINGS__: string
 declare const __ACTION_SEND_TEST_NOTIFICATION__: string
 declare const __ACTION_GET_PRICE_TRENDS__: string
+declare const __ACTION_CALCULATE_CHEAPEST_ENHANCEMENT__: string
+declare const __ACTION_GET_MOST_PROFITABLE_QUEST__: string
 
 /** Секрет для HMAC-подписи запросов */
 declare const __SIGNING_SECRET__: string

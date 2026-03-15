@@ -80,7 +80,7 @@ export function calculateCheapestEnhancement(
   command: CalculateCheapestEnhancementCommand,
   signal?: AbortSignal,
 ): Promise<CheapestEnhancementResult> {
-  return proxyRequest<CheapestEnhancementResult>('calculateCheapestEnhancement', command, signal)
+  return proxyRequest<CheapestEnhancementResult>('calculateCheapestEnhancement', command as unknown as Record<string, unknown>, signal)
 }
 
 /** Получение самого профитного квеста */

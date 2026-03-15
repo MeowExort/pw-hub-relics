@@ -1,4 +1,3 @@
-import React from 'react';
 import type { PriceTrendsStatistics } from '@/shared/types';
 import styles from './MarketStats.module.scss';
 

@@ -7,7 +7,6 @@ import type { FilterCriteriaDto, NotificationFilter } from '@/shared/types'
 import { useRelicSearchParams } from './useSearchParams'
 import { SearchFilters } from './components/SearchFilters'
 import { RelicCard } from './components/RelicCard'
-import { ViewToggle } from './components/ViewToggle'
 import { ActiveFilterChips } from './components/ActiveFilterChips'
 import { AttributeColorSettingsModal } from './components/AttributeColorSettingsModal'
 import styles from './SearchPage.module.scss'
@@ -32,7 +31,7 @@ export function SearchPage() {
   const { params, setParams, resetParams } = useRelicSearchParams()
   const { data, isLoading, isError } = useRelicsSearch(params)
   const { attributes } = useDictionaries()
-  const [view, setView] = useState<'grid' | 'list'>('grid')
+  const [view] = useState<'grid' | 'list'>('grid')
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const navigate = useNavigate()

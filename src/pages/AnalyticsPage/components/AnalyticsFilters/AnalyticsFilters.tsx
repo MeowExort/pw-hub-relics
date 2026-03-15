@@ -1,4 +1,3 @@
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getServers, getSlotTypes, getAttributes } from '@/shared/api/dictionaries';
 import { Select, MultiSelect, PriceRangeInput } from '@/shared/ui';

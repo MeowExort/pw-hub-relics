@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getPriceTrends } from '@/shared/api/relics';
 import { Spinner, Select } from '@/shared/ui';
