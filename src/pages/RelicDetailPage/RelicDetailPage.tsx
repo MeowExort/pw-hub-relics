@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { Spinner } from '@/shared/ui'
-import { useRelicDetail } from '@/shared/hooks'
+import { useRelicDetail, useAttributeStyles } from '@/shared/hooks'
 import clsx from 'clsx'
 import { PriceHistoryChart } from './PriceHistoryChart'
 import styles from './RelicDetailPage.module.scss'
@@ -36,6 +36,7 @@ function formatDate(iso: string): string {
 export function RelicDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { data: relic, isLoading, isError } = useRelicDetail(id)
+  const { getAttributeColor } = useAttributeStyles()
 
   if (isLoading) {
     return (
@@ -83,18 +84,41 @@ export function RelicDetailPage() {
           <div className={styles.sectionTitle}>Атрибуты</div>
           <div className={styles.attrList}>
             <div className={clsx(styles.attrRow, styles.mainAttr)}>
-              <span className={styles.attrName}>{relic.mainAttribute.attributeDefinition.name}</span>
-              <span className={styles.attrValue}>{relic.mainAttribute.value}</span>
+              <span 
+                className={styles.attrName}
+                style={getAttributeColor(relic.mainAttribute.attributeDefinition.id, relic.mainAttribute.value) ? { color: getAttributeColor(relic.mainAttribute.attributeDefinition.id, relic.mainAttribute.value)! } : undefined}
+              >
+                {relic.mainAttribute.attributeDefinition.name}
+              </span>
+              <span 
+                className={styles.attrValue}
+                style={getAttributeColor(relic.mainAttribute.attributeDefinition.id, relic.mainAttribute.value) ? { color: getAttributeColor(relic.mainAttribute.attributeDefinition.id, relic.mainAttribute.value)! } : undefined}
+              >
+                {relic.mainAttribute.value}
+              </span>
             </div>
             {relic.additionalAttributes.length > 0 && (
               <div className={styles.attrDivider} />
             )}
-            {relic.additionalAttributes.map((attr, idx) => (
-              <div key={idx} className={styles.attrRow}>
-                <span className={styles.attrName}>{attr.attributeDefinition.name}</span>
-                <span className={styles.attrValue}>{attr.value}</span>
-              </div>
-            ))}
+            {relic.additionalAttributes.map((attr, idx) => {
+              const userColor = getAttributeColor(attr.attributeDefinition.id, attr.value)
+              return (
+                <div key={idx} className={styles.attrRow}>
+                  <span 
+                    className={styles.attrName}
+                    style={userColor ? { color: userColor } : undefined}
+                  >
+                    {attr.attributeDefinition.name}
+                  </span>
+                  <span 
+                    className={styles.attrValue}
+                    style={userColor ? { color: userColor } : undefined}
+                  >
+                    {attr.value}
+                  </span>
+                </div>
+              )
+            })}
           </div>
         </div>
 

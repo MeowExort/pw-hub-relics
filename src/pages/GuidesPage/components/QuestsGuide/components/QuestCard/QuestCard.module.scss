@@ -1,0 +1,148 @@
+.card {
+  padding: var(--space-lg);
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+}
+
+.highlighted {
+  border-color: var(--warning);
+  background: linear-gradient(135deg, rgba(241, 196, 15, 0.08) 0%, var(--card) 100%);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-md);
+  gap: var(--space-md);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.crown {
+  font-size: var(--font-size-lg);
+}
+
+.name {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+}
+
+.label {
+  color: var(--text-muted);
+}
+
+.valueGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.value {
+  color: var(--text);
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.valueReward {
+  color: var(--success);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.valueProfit {
+  color: var(--warning);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.hoverable {
+  cursor: help;
+  border-bottom: 1px dashed currentColor;
+}
+
+.listingsCount {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.rank {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border-light);
+}
+
+.rankLabel {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.rankValue {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
+
+/* Тултип с ценами по расам */
+.raceTooltip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 180px;
+}
+
+.raceTooltipTitle {
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  color: var(--text);
+  margin-bottom: var(--space-xs);
+}
+
+.raceRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: var(--font-size-xs);
+}
+
+.raceName {
+  color: var(--text-secondary);
+}
+
+.racePrice {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}

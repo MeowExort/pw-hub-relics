@@ -40,7 +40,7 @@ export function MainLayout() {
                 to="/guides"
                 className={({ isActive }) => clsx(styles.navLink, isActive && styles.active)}
               >
-                Гайды
+                Калькуляторы
               </NavLink>
             </nav>
           )}

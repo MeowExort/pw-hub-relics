@@ -3,8 +3,8 @@ import clsx from 'clsx'
 import styles from './Tooltip.module.scss'
 
 interface TooltipProps {
-  /** Текст подсказки */
-  text: string
+  /** Содержимое подсказки */
+  text: ReactNode
   /** Позиция подсказки */
   position?: 'top' | 'bottom' | 'left' | 'right'
   /** Оборачиваемый элемент */

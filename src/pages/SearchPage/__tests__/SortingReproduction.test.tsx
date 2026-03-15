@@ -7,6 +7,11 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom'
 vi.mock('@/shared/hooks', () => ({
   useRelicsSearch: vi.fn(),
   useDictionaries: vi.fn(),
+  useAttributeStyles: vi.fn(() => ({
+    settings: { attributes: {} },
+    updateSettings: vi.fn(),
+    getAttributeColor: vi.fn(() => null),
+  })),
 }))
 
 const mockAttributes = [

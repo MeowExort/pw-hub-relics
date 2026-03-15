@@ -17,8 +17,7 @@ import styles from './PriceHistoryChart.module.scss'
 /** Доступные периоды для графика */
 const PERIODS = [
   { key: '7d', label: '7д', days: 7 },
-  { key: '30d', label: '30д', days: 30 },
-  { key: '90d', label: '90д', days: 90 },
+  { key: '30d', label: '30д', days: 30 }
 ] as const
 
 type PeriodKey = (typeof PERIODS)[number]['key']
@@ -75,8 +74,8 @@ function ChartTooltip({ active, payload, label }: {
         <span className={styles.tooltipValue}>{point.maxPrice.toLocaleString('ru-RU')}</span>
       </div>
       <div className={styles.tooltipRow}>
-        <span className={styles.tooltipLabel}>Объём:</span>
-        <span className={styles.tooltipValue}>{point.volume}</span>
+        <span className={styles.tooltipLabel}>Лотов:</span>
+        <span className={styles.tooltipValue}>{point.count}</span>
       </div>
     </div>
   )
@@ -112,7 +111,9 @@ export function PriceHistoryChart({ relic }: PriceHistoryChartProps) {
     }
   }, [relic, selectedPeriod.days])
 
-  const { data, isLoading } = usePriceTrends(params)
+  const { data: response, isLoading } = usePriceTrends(params)
+
+  const dataPoints = response?.dataPoints
 
   return (
     <div className={styles.wrapper}>
@@ -135,12 +136,12 @@ export function PriceHistoryChart({ relic }: PriceHistoryChartProps) {
         <div className={styles.loading}>
           <Spinner size="md" />
         </div>
-      ) : !data?.length ? (
+      ) : !dataPoints?.length ? (
         <div className={styles.empty}>Нет данных за выбранный период</div>
       ) : (
         <div className={styles.chartContainer}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+            <AreaChart data={dataPoints} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
               <defs>
                 <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#5b7ff5" stopOpacity={0.3} />
@@ -149,7 +150,7 @@ export function PriceHistoryChart({ relic }: PriceHistoryChartProps) {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#2a2d35" />
               <XAxis
-                dataKey="date"
+                dataKey="timestamp"
                 tickFormatter={formatXDate}
                 stroke="#555a63"
                 fontSize={11}

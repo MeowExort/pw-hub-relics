@@ -323,6 +323,8 @@ const ACTION_ROUTE_MAP: Record<string, RouteInfo> = {
   [actionHash('updateNotificationSettings')]: { method: 'PUT', path: '/api/telegram/notifications/settings' },
   [actionHash('sendTestNotification')]: { method: 'POST', path: '/api/telegram/notifications/test' },
   [actionHash('getPriceTrends')]: { method: 'GET', path: '/api/analytics/price-trends' },
+  [actionHash('calculateCheapestEnhancement')]: { method: 'POST', path: '/api/optimization/cheapest-enhancement' },
+  [actionHash('getMostProfitableQuest')]: { method: 'GET', path: '/api/optimization/most-profitable-quest' },
 }
 
 /**
@@ -713,6 +715,8 @@ export default defineConfig(({ command }) => ({
     __ACTION_UPDATE_NOTIFICATION_SETTINGS__: JSON.stringify(actionHash('updateNotificationSettings')),
     __ACTION_SEND_TEST_NOTIFICATION__: JSON.stringify(actionHash('sendTestNotification')),
     __ACTION_GET_PRICE_TRENDS__: JSON.stringify(actionHash('getPriceTrends')),
+    __ACTION_CALCULATE_CHEAPEST_ENHANCEMENT__: JSON.stringify(actionHash('calculateCheapestEnhancement')),
+    __ACTION_GET_MOST_PROFITABLE_QUEST__: JSON.stringify(actionHash('getMostProfitableQuest')),
     __SIGNING_SECRET__: JSON.stringify(signingSecret),
   },
   server: {

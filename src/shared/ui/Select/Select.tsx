@@ -24,6 +24,8 @@ interface SelectProps {
   className?: string
   /** Заблокирован ли компонент */
   disabled?: boolean
+  /** Показывать ли пустую опцию (placeholder) в выпадающем списке */
+  showEmptyOption?: boolean
 }
 
 /** Кастомный выпадающий список с поддержкой тёмной темы */
@@ -35,6 +37,7 @@ export function Select({
   placeholder = 'Все',
   className,
   disabled,
+  showEmptyOption = true,
 }: SelectProps) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -102,16 +105,18 @@ export function Select({
       </button>
       {open && (
         <ul className={styles.dropdown} role="listbox">
-          <li
-            className={clsx(styles.option, !value && styles.optionSelected)}
-            role="option"
-            aria-selected={!value}
-            onClick={() => handleSelect('')}
-            onKeyDown={(e) => handleOptionKeyDown(e, '')}
-            tabIndex={0}
-          >
-            {placeholder}
-          </li>
+          {showEmptyOption && (
+            <li
+              className={clsx(styles.option, !value && styles.optionSelected)}
+              role="option"
+              aria-selected={!value}
+              onClick={() => handleSelect('')}
+              onKeyDown={(e) => handleOptionKeyDown(e, '')}
+              tabIndex={0}
+            >
+              {placeholder}
+            </li>
+          )}
           {options.map((opt) => (
             <li
               key={opt.value}

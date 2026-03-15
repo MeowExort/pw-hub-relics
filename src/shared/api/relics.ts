@@ -9,7 +9,10 @@ import type {
   RelicSearchParams,
   PaginatedResponse,
   PriceTrendsParams,
-  PriceTrendPoint,
+  GetPriceTrendsResponse,
+  MostProfitableQuestResult,
+  CalculateCheapestEnhancementCommand,
+  CheapestEnhancementResult,
 } from '@/shared/types'
 
 /** Поиск реликвий с фильтрацией и пагинацией */
@@ -48,22 +51,43 @@ export function getRelicById(
   return proxyRequest<RelicDetail>('getRelicById', { id }, signal)
 }
 
-/** Получение истории цен по похожим реликвиям */
+/** Получение тенденций цен на реликвии */
 export function getPriceTrends(
   params: PriceTrendsParams,
   signal?: AbortSignal,
-): Promise<PriceTrendPoint[]> {
-  return proxyRequest<PriceTrendPoint[]>('getPriceTrends', {
-    'MainAttribute.Id': params.mainAttribute?.id,
-    'MainAttribute.MinValue': params.mainAttribute?.minValue,
-    'MainAttribute.MaxValue': params.mainAttribute?.maxValue,
-    AdditionalAttributes: params.additionalAttributes,
-    RelicDefinitionId: params.relicDefinitionId,
-    SoulLevel: params.soulLevel,
-    SoulType: params.soulType,
-    StartDate: params.startDate,
-    EndDate: params.endDate,
-    ServerId: params.serverId,
-    GroupBy: params.groupBy,
+): Promise<GetPriceTrendsResponse> {
+  return proxyRequest<GetPriceTrendsResponse>('getPriceTrends', {
+    startDate: params.startDate,
+    endDate: params.endDate,
+    relicDefinitionId: params.relicDefinitionId,
+    soulLevel: params.soulLevel,
+    soulType: params.soulType,
+    serverId: params.serverId,
+    groupBy: params.groupBy,
+    'mainAttribute.id': params.mainAttribute?.id,
+    'mainAttribute.minValue': params.mainAttribute?.minValue,
+    'mainAttribute.maxValue': params.mainAttribute?.maxValue,
+    ...params.additionalAttributes?.reduce((acc, attr, i) => ({
+      ...acc,
+      [`additionalAttributes[${i}].id`]: attr.id,
+      [`additionalAttributes[${i}].minValue`]: attr.minValue,
+      [`additionalAttributes[${i}].maxValue`]: attr.maxValue,
+    }), {}),
   }, signal)
+}
+
+/** Расчет самого дешевого способа заточки */
+export function calculateCheapestEnhancement(
+  command: CalculateCheapestEnhancementCommand,
+  signal?: AbortSignal,
+): Promise<CheapestEnhancementResult> {
+  return proxyRequest<CheapestEnhancementResult>('calculateCheapestEnhancement', command, signal)
+}
+
+/** Получение самого профитного квеста */
+export function getMostProfitableQuest(
+  serverId?: number,
+  signal?: AbortSignal,
+): Promise<MostProfitableQuestResult> {
+  return proxyRequest<MostProfitableQuestResult>('getMostProfitableQuest', { serverId }, signal)
 }

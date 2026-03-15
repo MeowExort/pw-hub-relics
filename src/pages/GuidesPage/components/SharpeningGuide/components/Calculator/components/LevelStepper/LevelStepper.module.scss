@@ -1,0 +1,78 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 38px;
+  transition: border-color var(--transition-fast);
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+}
+
+.button {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: var(--font-size-lg);
+  padding: 0 var(--space-md);
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background-color: var(--card-hover);
+    color: var(--primary);
+  }
+
+  &:disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
+}
+
+.input {
+  flex: 1;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  color: var(--text);
+  text-align: center;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  width: 50px;
+  height: 100%;
+  padding: 0;
+  outline: none;
+
+  /* Скрываем стрелки браузера */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  &[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+}

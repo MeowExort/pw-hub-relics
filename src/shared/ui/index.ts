@@ -7,3 +7,6 @@ export { Pagination } from './Pagination'
 export { PriceRangeInput } from './PriceRangeInput'
 export { MultiSelect } from './MultiSelect'
 export { Toggle } from './Toggle'
+
+export * from './Tabs/Tabs';
+export * from './Badge/Badge';

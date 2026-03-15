@@ -56,7 +56,7 @@ export function LandingPage() {
 
         <div className={styles.feature}>
           <div className={styles.featureIcon}>📖</div>
-          <h3 className={styles.featureTitle}>Гайды</h3>
+          <h3 className={styles.featureTitle}>Калькуляторы</h3>
           <p className={styles.featureDescription}>
             Калькулятор заточки, профитные квесты и рекомендации по оптимизации
             игрового процесса.

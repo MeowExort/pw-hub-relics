@@ -49,22 +49,28 @@ const RELIC_STUB: RelicDetail = {
 describe('PriceHistoryChart', () => {
   it('показывает спиннер при загрузке', () => {
     mockUsePriceTrends.mockReturnValue({ data: undefined, isLoading: true })
+    // data теперь GetPriceTrendsResponse | undefined
     render(<PriceHistoryChart relic={RELIC_STUB} />)
     expect(screen.getByText('История цен')).toBeInTheDocument()
   })
 
   it('показывает заглушку при пустых данных', () => {
-    mockUsePriceTrends.mockReturnValue({ data: [], isLoading: false })
+    mockUsePriceTrends.mockReturnValue({ data: { dataPoints: [] }, isLoading: false })
     render(<PriceHistoryChart relic={RELIC_STUB} />)
     expect(screen.getByText('Нет данных за выбранный период')).toBeInTheDocument()
   })
 
   it('рендерит график при наличии данных', () => {
     mockUsePriceTrends.mockReturnValue({
-      data: [
-        { date: '2026-01-01', averagePrice: 1000, minPrice: 800, maxPrice: 1200, volume: 5 },
-        { date: '2026-01-02', averagePrice: 1100, minPrice: 900, maxPrice: 1300, volume: 3 },
-      ],
+      data: {
+        dataPoints: [
+          { timestamp: '2026-01-01T00:00:00', averagePrice: 1000, minPrice: 800, maxPrice: 1200, count: 5 },
+          { timestamp: '2026-01-02T00:00:00', averagePrice: 1100, minPrice: 900, maxPrice: 1300, count: 3 },
+        ],
+        filters: { mainAttribute: null, additionalAttributes: null, relicDefinition: null, soulLevel: null, soulType: null },
+        period: { start: '2026-01-01T00:00:00', end: '2026-01-02T00:00:00' },
+        statistics: { overallAverage: 1050, overallMin: 800, overallMax: 1300, totalListings: 8, priceChange: 100, priceChangePercent: 10 },
+      },
       isLoading: false,
     })
     render(<PriceHistoryChart relic={RELIC_STUB} />)
@@ -72,7 +78,7 @@ describe('PriceHistoryChart', () => {
   })
 
   it('переключает период', () => {
-    mockUsePriceTrends.mockReturnValue({ data: [], isLoading: false })
+    mockUsePriceTrends.mockReturnValue({ data: { dataPoints: [] }, isLoading: false })
     render(<PriceHistoryChart relic={RELIC_STUB} />)
 
     const btn7d = screen.getByText('7д')

@@ -25,6 +25,8 @@ export type ApiAction =
   | 'updateNotificationSettings'
   | 'sendTestNotification'
   | 'getPriceTrends'
+  | 'calculateCheapestEnhancement'
+  | 'getMostProfitableQuest'
 
 /**
  * Маппинг действий → обфусцированные идентификаторы.
@@ -50,6 +52,8 @@ const ACTION_MAP: Record<ApiAction, string> = {
   updateNotificationSettings: __ACTION_UPDATE_NOTIFICATION_SETTINGS__,
   sendTestNotification: __ACTION_SEND_TEST_NOTIFICATION__,
   getPriceTrends: __ACTION_GET_PRICE_TRENDS__,
+  calculateCheapestEnhancement: __ACTION_CALCULATE_CHEAPEST_ENHANCEMENT__,
+  getMostProfitableQuest: __ACTION_GET_MOST_PROFITABLE_QUEST__,
 }
 
 /**
@@ -89,4 +93,6 @@ export const ACTION_ROUTES: Record<ApiAction, { method: string; path: string }> 
   updateNotificationSettings: { method: 'PUT', path: '/api/telegram/notifications/settings' },
   sendTestNotification: { method: 'POST', path: '/api/telegram/notifications/test' },
   getPriceTrends: { method: 'GET', path: '/api/analytics/price-trends' },
+  calculateCheapestEnhancement: { method: 'POST', path: '/api/optimization/cheapest-enhancement' },
+  getMostProfitableQuest: { method: 'GET', path: '/api/optimization/most-profitable-quest' },
 }

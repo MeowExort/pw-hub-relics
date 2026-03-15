@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import type { RelicListItem } from '@/shared/types'
+import { useAttributeStyles } from '@/shared/hooks'
 import styles from './RelicCard.module.scss'
 
 interface RelicCardProps {
@@ -39,6 +40,7 @@ function getSoulLevelClass(level: number): string {
 export function RelicCard({ relic, view = 'grid', highlightedAttributeIds }: RelicCardProps) {
   const def = relic.relicDefinition
   const displayName = cleanRelicName(def.name)
+  const { getAttributeColor } = useAttributeStyles()
 
   return (
     <Link
@@ -63,18 +65,40 @@ export function RelicCard({ relic, view = 'grid', highlightedAttributeIds }: Rel
 
       <div className={styles.attributes}>
         <div className={clsx(styles.attribute, styles.mainAttr)}>
-          <span className={styles.attrName}>{relic.mainAttribute.attributeDefinition.name}</span>
-          <span className={styles.attrValue}>{relic.mainAttribute.value}</span>
+          <span 
+            className={styles.attrName}
+            style={getAttributeColor(relic.mainAttribute.attributeDefinition.id, relic.mainAttribute.value) ? { color: getAttributeColor(relic.mainAttribute.attributeDefinition.id, relic.mainAttribute.value)! } : undefined}
+          >
+            {relic.mainAttribute.attributeDefinition.name}
+          </span>
+          <span 
+            className={styles.attrValue}
+            style={getAttributeColor(relic.mainAttribute.attributeDefinition.id, relic.mainAttribute.value) ? { color: getAttributeColor(relic.mainAttribute.attributeDefinition.id, relic.mainAttribute.value)! } : undefined}
+          >
+            {relic.mainAttribute.value}
+          </span>
         </div>
         {relic.additionalAttributes.length > 0 && (
           <div className={styles.attrDivider} />
         )}
         {relic.additionalAttributes.map((attr, idx) => {
           const isHighlighted = highlightedAttributeIds?.has(attr.attributeDefinition.id)
+          const userColor = getAttributeColor(attr.attributeDefinition.id, attr.value)
+          
           return (
             <div key={idx} className={clsx(styles.attribute, isHighlighted && styles.highlightedAttr)}>
-              <span className={styles.attrName}>{attr.attributeDefinition.name}</span>
-              <span className={styles.attrValue}>{attr.value}</span>
+              <span 
+                className={styles.attrName}
+                style={userColor ? { color: userColor } : undefined}
+              >
+                {attr.attributeDefinition.name}
+              </span>
+              <span 
+                className={styles.attrValue}
+                style={userColor ? { color: userColor } : undefined}
+              >
+                {attr.value}
+              </span>
             </div>
           )
         })}

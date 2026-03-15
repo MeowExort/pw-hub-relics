@@ -4,6 +4,11 @@
   padding: 0;
   max-width: 90vw;
   max-height: 90vh;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 
   &::backdrop {
     background: rgba(0, 0, 0, 0.6);

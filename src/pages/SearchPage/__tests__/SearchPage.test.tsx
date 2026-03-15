@@ -1,17 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { SearchPage } from '../SearchPage'
 import { useRelicsSearch, useDictionaries } from '@/shared/hooks'
 import { useRelicSearchParams } from '../useSearchParams'
 import { BrowserRouter } from 'react-router-dom'
+import { isAuthenticated } from '@/shared/api/auth'
 
 vi.mock('@/shared/hooks', () => ({
   useRelicsSearch: vi.fn(),
   useDictionaries: vi.fn(),
+  useAttributeStyles: vi.fn(() => ({
+    settings: { attributes: {} },
+    updateSettings: vi.fn(),
+    getAttributeColor: vi.fn(() => null),
+  })),
 }))
 
 vi.mock('../useSearchParams', () => ({
   useRelicSearchParams: vi.fn(),
+}))
+
+vi.mock('@/shared/api/auth', () => ({
+  isAuthenticated: vi.fn(),
 }))
 
 const mockAttributes = [
@@ -39,6 +49,7 @@ describe('SearchPage', () => {
       isLoading: false,
       isError: false,
     })
+    ;(isAuthenticated as any).mockReturnValue(false)
   })
 
   it('рендерит элементы сортировки при наличии данных', () => {
@@ -77,5 +88,45 @@ describe('SearchPage', () => {
     )
 
     expect(screen.getByLabelText('Выберите атрибут')).toBeInTheDocument()
+  })
+
+  it('показывает кнопку подписки в фильтрах для авторизованного пользователя', () => {
+    ;(isAuthenticated as any).mockReturnValue(true)
+    ;(useRelicSearchParams as any).mockReturnValue({
+      params: {},
+      setParams: vi.fn(),
+      resetParams: vi.fn(),
+    })
+
+    render(
+      <BrowserRouter>
+        <SearchPage />
+      </BrowserRouter>
+    )
+
+    // Сначала открываем фильтры, так как по умолчанию они могут быть закрыты (в SearchPage filtersOpen=false)
+    const filterToggle = screen.getByRole('button', { name: /Фильтры/i })
+    act(() => {
+      filterToggle.click()
+    })
+
+    expect(screen.getByRole('button', { name: /Подписаться на фильтр/i })).toBeInTheDocument()
+  })
+
+  it('не показывает кнопку подписки для неавторизованного пользователя', () => {
+    ;(isAuthenticated as any).mockReturnValue(false)
+    
+    render(
+      <BrowserRouter>
+        <SearchPage />
+      </BrowserRouter>
+    )
+
+    const filterToggle = screen.getByRole('button', { name: /Фильтры/i })
+    act(() => {
+      filterToggle.click()
+    })
+
+    expect(screen.queryByRole('button', { name: /Подписаться на фильтр/i })).not.toBeInTheDocument()
   })
 })

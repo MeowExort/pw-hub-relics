@@ -36,10 +36,12 @@ interface SearchFiltersProps {
   onChange: (params: Partial<RelicSearchParams>) => void
   /** Сброс всех фильтров */
   onReset: () => void
+  /** Обработчик подписки на фильтр */
+  onSubscribe?: () => void
 }
 
 /** Панель фильтрации реликвий */
-export function SearchFilters({ params, onChange, onReset }: SearchFiltersProps) {
+export function SearchFilters({ params, onChange, onReset, onSubscribe }: SearchFiltersProps) {
   const { servers, slotTypes, attributes } = useDictionaries()
 
   return (
@@ -117,6 +119,11 @@ export function SearchFilters({ params, onChange, onReset }: SearchFiltersProps)
       />
 
       <div className={styles.actions}>
+        {onSubscribe && (
+          <Button variant="secondary" size="sm" onClick={onSubscribe} className={styles.subscribeBtn}>
+            🔔 Подписаться на фильтр
+          </Button>
+        )}
         <Button variant="ghost" size="sm" onClick={onReset}>
           Сбросить
         </Button>

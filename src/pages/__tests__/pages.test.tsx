@@ -18,6 +18,30 @@ vi.mock('@/shared/api/auth', () => ({
   clearTokens: vi.fn(),
 }))
 
+vi.mock('@/shared/hooks', async (importOriginal) => {
+  const actual = await importOriginal<any>()
+  return {
+    ...actual,
+    useRelicsSearch: vi.fn(() => ({
+      data: { items: [], totalCount: 0, pageNumber: 1, totalPages: 1 },
+      isLoading: false,
+      isError: false,
+    })),
+    useDictionaries: vi.fn(() => ({
+      servers: [],
+      slotTypes: [],
+      attributes: [],
+      isLoading: false,
+      isError: false,
+    })),
+    useAttributeStyles: vi.fn(() => ({
+      settings: { attributes: {} },
+      updateSettings: vi.fn(),
+      getAttributeColor: vi.fn(() => null),
+    })),
+  }
+})
+
 import { isAuthenticated } from '@/shared/api/auth'
 
 /** Обёртка с провайдерами для компонентов, использующих Router и React Query */
@@ -49,7 +73,7 @@ describe('Страницы-заглушки', () => {
 
   it('GuidesPage рендерит заголовок', () => {
     render(<GuidesPage />)
-    expect(screen.getByText('Гайды')).toBeInTheDocument()
+    expect(screen.getByText('Калькуляторы')).toBeInTheDocument()
   })
 
   it('NotFoundPage рендерит 404 и ссылку на главную', () => {
@@ -70,7 +94,7 @@ describe('LandingPage', () => {
     expect(screen.getByText('Поиск реликвий')).toBeInTheDocument()
     expect(screen.getByText('Аналитика цен')).toBeInTheDocument()
     expect(screen.getByText('Уведомления')).toBeInTheDocument()
-    expect(screen.getByText('Гайды')).toBeInTheDocument()
+    expect(screen.getByText('Калькуляторы')).toBeInTheDocument()
   })
 })
 

@@ -613,37 +613,6 @@
         }
       }
     },
-    "/api/relics/parse": {
-      "post": {
-        "tags": [
-          "Relics"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParseRelicCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParseRelicCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParseRelicCommand"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/relics/seed/market": {
       "post": {
         "tags": [
@@ -1004,7 +973,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "currentExperience": {
+          "currentEnhancementLevel": {
             "type": "integer",
             "format": "int32"
           },
@@ -3085,21 +3054,6 @@
           "paid_message_star_count": {
             "type": "integer",
             "format": "int64"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ParseRelicCommand": {
-        "type": "object",
-        "properties": {
-          "server": {
-            "type": "string",
-            "nullable": true
-          },
-          "data": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
           }
         },
         "additionalProperties": false

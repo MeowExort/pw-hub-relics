@@ -63,7 +63,9 @@
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
+  min-width: 100%;
+  width: max-content;
+  max-width: 400px;
   margin-top: var(--space-xs);
   list-style: none;
   padding: var(--space-xs) 0;
@@ -82,6 +84,7 @@
   color: var(--text);
   cursor: pointer;
   transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
 
   &:hover {
     background: var(--primary);

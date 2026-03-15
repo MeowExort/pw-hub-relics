@@ -209,22 +209,140 @@ export interface EnhancementCurvePoint {
 
 /** Параметры запроса ценовых трендов */
 export interface PriceTrendsParams {
-  mainAttribute?: AttributeFilterDto
-  additionalAttributes?: AttributeFilterDto[]
+  startDate: string
+  endDate: string
   relicDefinitionId?: number
   soulLevel?: number
   soulType?: number
-  startDate?: string
-  endDate?: string
   serverId?: number
-  groupBy?: string
+  groupBy?: 'hour' | 'day' | 'week'
+  mainAttribute?: AttributeFilterDto
+  additionalAttributes?: AttributeFilterDto[]
 }
 
 /** Точка данных ценового тренда */
 export interface PriceTrendPoint {
-  date: string
+  timestamp: string
   averagePrice: number
   minPrice: number
   maxPrice: number
-  volume: number
+  count: number
+}
+
+/** Расшифровка фильтра в ответе */
+export interface PriceTrendFilterRef {
+  id: number
+  name: string
+}
+
+/** Блок применённых фильтров в ответе ценовых трендов */
+export interface PriceTrendsFilters {
+  mainAttribute: PriceTrendFilterRef | null
+  additionalAttributes: PriceTrendFilterRef[] | null
+  relicDefinition: PriceTrendFilterRef | null
+  soulLevel: number | null
+  soulType: number | null
+}
+
+/** Период анализа */
+export interface PriceTrendsPeriod {
+  start: string
+  end: string
+}
+
+/** Агрегированная статистика за весь период */
+export interface PriceTrendsStatistics {
+  overallAverage: number
+  overallMin: number
+  overallMax: number
+  totalListings: number
+  priceChange: number
+  priceChangePercent: number
+}
+
+/** Ответ эндпоинта GET /api/analytics/price-trends */
+export interface GetPriceTrendsResponse {
+  filters: PriceTrendsFilters
+  period: PriceTrendsPeriod
+  dataPoints: PriceTrendPoint[]
+  statistics: PriceTrendsStatistics
+}
+
+/** Команда для расчета оптимальной заточки */
+export interface CalculateCheapestEnhancementCommand {
+  targetEnhancementLevel: number
+  currentEnhancementLevel: number
+  serverId?: number
+  soulType: number
+}
+
+/** Результат расчета оптимальной заточки */
+export interface CheapestEnhancementResult {
+  targetLevel: number
+  requiredExperience: number
+  currentExperience: number
+  missingExperience: number
+  recommendations?: Recommendation[]
+  totalRelicsNeeded: number
+  totalCost: number
+  totalCostFormatted: string
+  averagePricePerExperience: number
+  steps?: string[]
+}
+
+/** Рекомендация по реликвии для заточки */
+export interface Recommendation {
+  relicListingId: string
+  relicName: string
+  absorbExperience: number
+  price: number
+  pricePerExperience: number
+  cumulativeExperience: number
+  cumulativeCost: number
+}
+
+/** Результат запроса самого профитного квеста */
+export interface MostProfitableQuestResult {
+  serverId: number
+  serverName: string
+  calculatedAt: string
+  recommendations: QuestRecommendation[]
+  levelOneRecommendations: LevelOneRecommendation[]
+}
+
+/** Рекомендация по квесту */
+export interface QuestRecommendation {
+  rank: number
+  soulType: number
+  soulTypeName: string
+  targetSoulLevel: number
+  questCost: number
+  questCostFormatted: string
+  expectedReward: number
+  expectedRewardFormatted: string
+  expectedProfit: number
+  expectedProfitFormatted: string
+  profitPercent: number
+  listingsCountByQuestCost?: number
+  listingsCountByExpectedReward?: number
+  priceBreakdown: Record<string, PriceBreakdownEntry>
+}
+
+/** Рекомендация для 1 уровня души */
+export interface LevelOneRecommendation {
+  rank: number
+  soulType: number
+  soulTypeName: string
+  expectedReward: number
+  expectedRewardFormatted: string
+  listingsCountByExpectedReward?: number
+  avgMinPriceByRace: Record<string, number>
+  listingsCount: number
+}
+
+/** Запись разбивки цен по уровню */
+export interface PriceBreakdownEntry {
+  avgMinPrice: number
+  minPriceByRace: Record<string, number>
+  listingsCount: number
 }

@@ -9,6 +9,7 @@ import { SearchFilters } from './components/SearchFilters'
 import { RelicCard } from './components/RelicCard'
 import { ViewToggle } from './components/ViewToggle'
 import { ActiveFilterChips } from './components/ActiveFilterChips'
+import { AttributeColorSettingsModal } from './components/AttributeColorSettingsModal'
 import styles from './SearchPage.module.scss'
 
 /** Подсчитывает количество активных фильтров */
@@ -32,6 +33,7 @@ export function SearchPage() {
   const { attributes } = useDictionaries()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const navigate = useNavigate()
   const authenticated = isAuthenticated()
 
@@ -85,17 +87,22 @@ export function SearchPage() {
             )}
             <span className={styles.filtersArrow}>{filtersOpen ? '▲' : '▼'}</span>
           </button>
-          {authenticated && (
-            <Button variant="secondary" size="sm" onClick={handleSubscribe}>
-              🔔 Подписаться на фильтр
-            </Button>
-          )}
-          <ViewToggle value={view} onChange={setView} />
+          <Button variant="ghost" size="sm" onClick={() => setSettingsOpen(true)} title="Настройка подсветки">
+            🎨
+          </Button>
+          {/*<ViewToggle value={view} onChange={setView} />*/}
         </div>
       </div>
 
+      <AttributeColorSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+
       {filtersOpen && (
-        <SearchFilters params={params} onChange={setParams} onReset={resetParams} />
+        <SearchFilters
+          params={params}
+          onChange={setParams}
+          onReset={resetParams}
+          onSubscribe={authenticated ? handleSubscribe : undefined}
+        />
       )}
 
       <ActiveFilterChips params={params} onChange={setParams} onReset={resetParams} />
