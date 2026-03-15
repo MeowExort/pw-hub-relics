@@ -179,8 +179,8 @@ export function SearchPage() {
                 <Select
                   placeholder="Выберите атрибут"
                   options={attributes.map(a => ({ value: a.id, label: a.name }))}
-                  value={params.sortAttributeId || ''}
-                  onChange={(v) => setParams({ sortAttributeId: v ? Number(v) : undefined })}
+                  value={params.sortAttributeId ?? ''}
+                  onChange={(v) => setParams({ sortAttributeId: v !== '' ? Number(v) : undefined })}
                   className={styles.sortSelect}
                 />
               )}

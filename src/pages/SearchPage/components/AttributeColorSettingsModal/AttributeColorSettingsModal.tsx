@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { Modal, Button, Select } from '@/shared/ui'
 import { useAttributeStyles, useDictionaries } from '@/shared/hooks'
-import type { AttributeColorRule } from '@/shared/types'
+import { presetService } from '@/shared/lib/presetService'
+import type { AttributeColorRule, AttributeColorPreset } from '@/shared/types'
 import styles from './AttributeColorSettingsModal.module.scss'
 
 interface AttributeColorSettingsModalProps {
@@ -18,11 +19,63 @@ export function AttributeColorSettingsModal({ open, onClose }: AttributeColorSet
   const { attributes } = useDictionaries()
   const { settings, updateSettings } = useAttributeStyles()
 
-  // Состояние формы нового правила
+  // Состояние формы нового/редактируемого правила
   const [selectedAttrId, setSelectedAttrId] = useState<number | undefined>(undefined)
   const [minVal, setMinVal] = useState<string>('')
   const [maxVal, setMaxVal] = useState<string>('')
   const [color, setColor] = useState<string>('#ff0000')
+
+  // Состояние редактирования: attrId и ruleId редактируемого правила
+  const [editingAttrId, setEditingAttrId] = useState<number | null>(null)
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null)
+
+  // Пресеты
+  const [presets, setPresets] = useState<AttributeColorPreset[]>(() => presetService.getPresets())
+  const [presetName, setPresetName] = useState('')
+  const [importValue, setImportValue] = useState('')
+
+  /** Обновить список пресетов из localStorage */
+  const refreshPresets = useCallback(() => {
+    setPresets(presetService.getPresets())
+  }, [])
+
+  /** Сохранить текущие настройки как пресет */
+  const handleSavePreset = () => {
+    const name = presetName.trim()
+    if (!name) return
+    presetService.savePreset(name, settings)
+    setPresetName('')
+    refreshPresets()
+  }
+
+  /** Загрузить пресет (применить его настройки) */
+  const handleLoadPreset = (preset: AttributeColorPreset) => {
+    updateSettings(preset.settings)
+  }
+
+  /** Удалить пресет */
+  const handleDeletePreset = (id: string) => {
+    presetService.deletePreset(id)
+    refreshPresets()
+  }
+
+  /** Экспорт текущих настроек в буфер обмена (base64) */
+  const handleExport = async () => {
+    const base64 = presetService.exportSettings(settings)
+    await navigator.clipboard.writeText(base64)
+    alert('Настройки скопированы в буфер обмена')
+  }
+
+  /** Импорт настроек из base64-строки */
+  const handleImport = () => {
+    const imported = presetService.importSettings(importValue)
+    if (imported) {
+      updateSettings(imported)
+      setImportValue('')
+    } else {
+      alert('Неверный формат данных')
+    }
+  }
 
   /** Список всех правил в плоском виде для удобства отображения */
   const flatRules = useMemo(() => {
@@ -39,9 +92,29 @@ export function AttributeColorSettingsModal({ open, onClose }: AttributeColorSet
     })
   }, [settings.attributes, attributes])
 
+  /** Начало редактирования правила */
+  const handleEditRule = (attrId: number, rule: AttributeColorRule) => {
+    setEditingAttrId(attrId)
+    setEditingRuleId(rule.id)
+    setSelectedAttrId(attrId)
+    setMinVal(rule.min !== null ? String(rule.min) : '')
+    setMaxVal(rule.max !== null ? String(rule.max) : '')
+    setColor(rule.color)
+  }
+
+  /** Отмена редактирования */
+  const handleCancelEdit = () => {
+    setEditingAttrId(null)
+    setEditingRuleId(null)
+    setSelectedAttrId(undefined)
+    setMinVal('')
+    setMaxVal('')
+    setColor('#ff0000')
+  }
+
   /** Добавление нового правила */
   const handleAddRule = () => {
-    if (!selectedAttrId) return
+    if (selectedAttrId === undefined) return
 
     const newRule: AttributeColorRule = {
       id: crypto.randomUUID(),
@@ -62,6 +135,29 @@ export function AttributeColorSettingsModal({ open, onClose }: AttributeColorSet
     // Сброс полей (кроме атрибута и цвета для удобства серийного добавления)
     setMinVal('')
     setMaxVal('')
+  }
+
+  /** Сохранение отредактированного правила */
+  const handleSaveRule = () => {
+    if (editingAttrId === null || !editingRuleId) return
+
+    const updatedRule: AttributeColorRule = {
+      id: editingRuleId,
+      min: minVal === '' ? null : Number(minVal),
+      max: maxVal === '' ? null : Number(maxVal),
+      color
+    }
+
+    const currentRules = settings.attributes[editingAttrId] || []
+    updateSettings({
+      ...settings,
+      attributes: {
+        ...settings.attributes,
+        [editingAttrId]: currentRules.map(r => r.id === editingRuleId ? updatedRule : r)
+      }
+    })
+
+    handleCancelEdit()
   }
 
   /** Удаление правила */
@@ -97,7 +193,7 @@ export function AttributeColorSettingsModal({ open, onClose }: AttributeColorSet
             label="Характеристика"
             options={attributes.map(a => ({ value: a.id, label: a.name }))}
             value={selectedAttrId}
-            onChange={(v) => setSelectedAttrId(v ? Number(v) : undefined)}
+            onChange={(v) => setSelectedAttrId(v !== '' ? Number(v) : undefined)}
           />
           <div className={styles.inputGroup}>
             <label className={styles.label}>От</label>
@@ -129,9 +225,20 @@ export function AttributeColorSettingsModal({ open, onClose }: AttributeColorSet
             />
           </div>
         </div>
-        <Button onClick={handleAddRule} disabled={!selectedAttrId} size="sm">
-          Добавить правило
-        </Button>
+        {editingRuleId ? (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button onClick={handleSaveRule} size="sm">
+              Сохранить
+            </Button>
+            <Button variant="ghost" onClick={handleCancelEdit} size="sm">
+              Отмена
+            </Button>
+          </div>
+        ) : (
+          <Button onClick={handleAddRule} disabled={selectedAttrId === undefined} size="sm">
+            Добавить правило
+          </Button>
+        )}
       </div>
 
       <div className={styles.rulesList}>
@@ -159,6 +266,14 @@ export function AttributeColorSettingsModal({ open, onClose }: AttributeColorSet
                 <Button 
                   variant="ghost" 
                   size="sm" 
+                  onClick={() => handleEditRule(attrId, rule)}
+                  aria-label="Редактировать"
+                >
+                  ✎
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
                   onClick={() => handleRemoveRule(attrId, rule.id)}
                   aria-label="Удалить"
                 >
@@ -168,6 +283,62 @@ export function AttributeColorSettingsModal({ open, onClose }: AttributeColorSet
             )
           })
         )}
+      </div>
+
+      {/* Пресеты */}
+      <div className={styles.presetsSection}>
+        <h3 className={styles.sectionTitle}>Пресеты</h3>
+        <div className={styles.presetForm}>
+          <input
+            type="text"
+            className={styles.input}
+            value={presetName}
+            onChange={e => setPresetName(e.target.value)}
+            placeholder="Название пресета"
+            aria-label="Название пресета"
+          />
+          <Button onClick={handleSavePreset} disabled={!presetName.trim()} size="sm">
+            Сохранить как пресет
+          </Button>
+        </div>
+        {presets.length > 0 && (
+          <div className={styles.presetList}>
+            {presets.map(preset => (
+              <div key={preset.id} className={styles.presetItem}>
+                <span className={styles.presetName}>{preset.name}</span>
+                <Button variant="ghost" size="sm" onClick={() => handleLoadPreset(preset)} aria-label={`Загрузить пресет ${preset.name}`}>
+                  Загрузить
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => handleDeletePreset(preset.id)} aria-label={`Удалить пресет ${preset.name}`}>
+                  ✕
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Экспорт / Импорт */}
+      <div className={styles.exportImportSection}>
+        <h3 className={styles.sectionTitle}>Экспорт / Импорт</h3>
+        <div className={styles.exportImportButtons}>
+          <Button onClick={handleExport} size="sm" disabled={flatRules.length === 0}>
+            Копировать настройки
+          </Button>
+        </div>
+        <div className={styles.importForm}>
+          <input
+            type="text"
+            className={styles.input}
+            value={importValue}
+            onChange={e => setImportValue(e.target.value)}
+            placeholder="Вставьте строку"
+            aria-label="Импорт настроек"
+          />
+          <Button onClick={handleImport} size="sm" disabled={!importValue.trim()}>
+            Импортировать
+          </Button>
+        </div>
       </div>
 
       <div className={styles.footer}>

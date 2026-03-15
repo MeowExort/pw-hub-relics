@@ -2,9 +2,13 @@ import { useState, useCallback, useEffect } from 'react'
 import type { AttributeColorSettings } from '@/shared/types'
 import { attributeStylesService } from '@/shared/lib/attributeStylesService'
 
+/** Кастомное событие для синхронизации настроек подсветки между компонентами */
+const SETTINGS_CHANGE_EVENT = 'pwhub_attribute_styles_change'
+
 /**
  * Хук для работы с пользовательскими стилями атрибутов.
  * Позволяет получать и обновлять настройки подсветки.
+ * Все экземпляры хука синхронизируются через кастомное событие.
  */
 export function useAttributeStyles() {
   const [settings, setSettings] = useState<AttributeColorSettings>(() => attributeStylesService.getSettings())
@@ -13,6 +17,8 @@ export function useAttributeStyles() {
   const updateSettings = useCallback((newSettings: AttributeColorSettings) => {
     attributeStylesService.saveSettings(newSettings)
     setSettings(newSettings)
+    // Оповещаем другие экземпляры хука в той же вкладке
+    window.dispatchEvent(new CustomEvent(SETTINGS_CHANGE_EVENT))
   }, [])
 
   /** Получить цвет для атрибута по его ID и значению */
@@ -28,6 +34,15 @@ export function useAttributeStyles() {
 
     return rule ? rule.color : null
   }, [settings])
+
+  // Синхронизация между экземплярами хука в одной вкладке
+  useEffect(() => {
+    const handleChange = () => {
+      setSettings(attributeStylesService.getSettings())
+    }
+    window.addEventListener(SETTINGS_CHANGE_EVENT, handleChange)
+    return () => window.removeEventListener(SETTINGS_CHANGE_EVENT, handleChange)
+  }, [])
 
   // Синхронизация между вкладками
   useEffect(() => {

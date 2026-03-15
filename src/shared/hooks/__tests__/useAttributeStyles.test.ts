@@ -45,6 +45,24 @@ describe('useAttributeStyles', () => {
     expect(attributeStylesService.getSettings()).toEqual(newSettings)
   })
 
+  it('должен синхронизировать настройки между экземплярами хука в одной вкладке', () => {
+    const { result: hook1 } = renderHook(() => useAttributeStyles())
+    const { result: hook2 } = renderHook(() => useAttributeStyles())
+
+    const newSettings = {
+      attributes: {
+        5: [{ id: '5', min: 0, max: 100, color: 'purple' }]
+      }
+    }
+
+    act(() => {
+      hook1.current.updateSettings(newSettings)
+    })
+
+    // Второй экземпляр хука должен получить обновлённые настройки
+    expect(hook2.current.settings).toEqual(newSettings)
+  })
+
   it('должен реагировать на изменения в localStorage из других вкладок', () => {
     const { result } = renderHook(() => useAttributeStyles())
     

@@ -15,3 +15,13 @@ export interface AttributeColorSettings {
   /** Ключ — ID определения атрибута (attributeDefinitionId), значение — массив правил */
   attributes: Record<number, AttributeColorRule[]>
 }
+
+/** Сохранённый пресет настроек подсветки */
+export interface AttributeColorPreset {
+  /** Уникальный ID пресета */
+  id: string
+  /** Название пресета */
+  name: string
+  /** Настройки подсветки */
+  settings: AttributeColorSettings
+}
