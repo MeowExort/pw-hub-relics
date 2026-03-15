@@ -9,6 +9,7 @@ import { isAuthenticated } from '@/shared/api/auth'
 vi.mock('@/shared/hooks', () => ({
   useRelicsSearch: vi.fn(),
   useDictionaries: vi.fn(),
+  useNotificationFilters: vi.fn(() => ({ filters: [], isLoading: false })),
   useAttributeStyles: vi.fn(() => ({
     settings: { attributes: {} },
     updateSettings: vi.fn(),

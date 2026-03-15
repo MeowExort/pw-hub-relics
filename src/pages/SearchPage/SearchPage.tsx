@@ -1,9 +1,9 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Spinner, Pagination, Select, Button } from '@/shared/ui'
-import { useRelicsSearch, useDictionaries } from '@/shared/hooks'
+import { useRelicsSearch, useDictionaries, useNotificationFilters } from '@/shared/hooks'
 import { isAuthenticated } from '@/shared/api/auth'
-import type { FilterCriteriaDto } from '@/shared/types'
+import type { FilterCriteriaDto, NotificationFilter } from '@/shared/types'
 import { useRelicSearchParams } from './useSearchParams'
 import { SearchFilters } from './components/SearchFilters'
 import { RelicCard } from './components/RelicCard'
@@ -37,6 +37,27 @@ export function SearchPage() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const navigate = useNavigate()
   const authenticated = isAuthenticated()
+  const { filters: subscriptions } = useNotificationFilters()
+
+  /** Применить фильтр из подписки */
+  const handleApplySubscription = useCallback((filter: NotificationFilter) => {
+    const c = filter.criteria
+    setParams({
+      serverId: c.serverId ?? undefined,
+      soulType: c.soulType ?? undefined,
+      race: c.race ?? undefined,
+      soulLevel: c.soulLevel ?? undefined,
+      slotTypeId: c.slotTypeId ?? undefined,
+      mainAttributeIds: c.mainAttributeIds ?? undefined,
+      additionalAttributes: c.additionalAttributes ?? [],
+      minPrice: c.minPrice != null ? c.minPrice / 100 : undefined,
+      maxPrice: c.maxPrice != null ? c.maxPrice / 100 : undefined,
+      minEnhancementLevel: c.minEnhancementLevel ?? undefined,
+      maxEnhancementLevel: c.maxEnhancementLevel ?? undefined,
+      minAbsorbExperience: c.minAbsorbExperience ?? undefined,
+      maxAbsorbExperience: c.maxAbsorbExperience ?? undefined,
+    })
+  }, [setParams])
 
   /** Подписаться на текущий фильтр — переход на страницу подписок с критериями */
   const handleSubscribe = useCallback(() => {
@@ -81,6 +102,18 @@ export function SearchPage() {
       <div className={styles.toolbar}>
         <h1 className={styles.title}>Поиск реликвий</h1>
         <div className={styles.toolbarActions}>
+          {authenticated && subscriptions.length > 0 && (
+            <Select
+              placeholder="Применить из подписки"
+              options={subscriptions.map((s) => ({ value: s.id, label: s.name }))}
+              value=""
+              onChange={(v) => {
+                const sub = subscriptions.find((s) => s.id === v)
+                if (sub) handleApplySubscription(sub)
+              }}
+              className={styles.subscriptionSelect}
+            />
+          )}
           <button
             type="button"
             className={styles.filtersToggle}

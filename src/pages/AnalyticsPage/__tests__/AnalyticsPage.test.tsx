@@ -17,6 +17,14 @@ vi.mock('@/shared/api/dictionaries', () => ({
   getAttributes: vi.fn(),
 }));
 
+vi.mock('@/shared/hooks', () => ({
+  useNotificationFilters: vi.fn(() => ({ filters: [], isLoading: false })),
+}));
+
+vi.mock('@/shared/api/auth', () => ({
+  isAuthenticated: vi.fn(() => false),
+}));
+
 // Мок recharts — рендерим просто контейнер
 vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: any) => <div data-testid="responsive-container">{children}</div>,

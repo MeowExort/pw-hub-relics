@@ -1,7 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getPriceTrends } from '@/shared/api/relics';
-import { Spinner } from '@/shared/ui';
+import { Spinner, Select } from '@/shared/ui';
+import { useNotificationFilters } from '@/shared/hooks';
+import { isAuthenticated } from '@/shared/api/auth';
+import type { NotificationFilter } from '@/shared/types';
 import { AnalyticsFilters, type PeriodId } from './components/AnalyticsFilters';
 import { PriceChart } from './components/PriceChart';
 import { MarketStats } from './components/MarketStats';
@@ -14,6 +17,28 @@ import styles from './AnalyticsPage.module.scss';
  */
 export function AnalyticsPage() {
   const { params, setParams } = useAnalyticsSearchParams();
+  const authenticated = isAuthenticated();
+  const { filters: subscriptions } = useNotificationFilters();
+
+  /** Применить фильтр из подписки */
+  const handleApplySubscription = useCallback((filter: NotificationFilter) => {
+    const c = filter.criteria;
+    setParams({
+      serverId: c.serverId ?? undefined,
+      soulType: c.soulType ?? undefined,
+      race: c.race ?? undefined,
+      soulLevel: c.soulLevel ?? undefined,
+      slotTypeId: c.slotTypeId ?? undefined,
+      mainAttributeIds: c.mainAttributeIds ?? undefined,
+      additionalAttributes: c.additionalAttributes ?? [],
+      minPrice: c.minPrice ?? undefined,
+      maxPrice: c.maxPrice ?? undefined,
+      minEnhancementLevel: c.minEnhancementLevel ?? undefined,
+      maxEnhancementLevel: c.maxEnhancementLevel ?? undefined,
+      minAbsorbExperience: c.minAbsorbExperience ?? undefined,
+      maxAbsorbExperience: c.maxAbsorbExperience ?? undefined,
+    });
+  }, [setParams]);
 
   const { startDate, endDate } = useMemo(() => {
     const end = new Date();
@@ -62,7 +87,21 @@ export function AnalyticsPage() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Аналитика цен</h1>
+        <div className={styles.headerTop}>
+          <h1 className={styles.title}>Аналитика цен</h1>
+          {authenticated && subscriptions.length > 0 && (
+            <Select
+              placeholder="Применить из подписки"
+              options={subscriptions.map((s) => ({ value: s.id, label: s.name }))}
+              value=""
+              onChange={(v) => {
+                const sub = subscriptions.find((s) => s.id === v)
+                if (sub) handleApplySubscription(sub)
+              }}
+              className={styles.subscriptionSelect}
+            />
+          )}
+        </div>
         <p className={styles.description}>
           Тренды и динамика цен на реликвии. Выберите сервер для начала анализа.
         </p>

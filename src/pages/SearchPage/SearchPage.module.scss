@@ -66,6 +66,10 @@
   color: var(--text-muted);
 }
 
+.subscriptionSelect {
+  min-width: 200px;
+}
+
 .count {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);

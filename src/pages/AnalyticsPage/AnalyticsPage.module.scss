@@ -13,11 +13,22 @@
   gap: var(--space-xs);
 }
 
+.headerTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
 .title {
   font-size: var(--font-size-2xl);
   font-weight: 800;
   color: var(--text);
   margin: 0;
+}
+
+.subscriptionSelect {
+  min-width: 200px;
 }
 
 .description {

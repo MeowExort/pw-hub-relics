@@ -7,6 +7,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom'
 vi.mock('@/shared/hooks', () => ({
   useRelicsSearch: vi.fn(),
   useDictionaries: vi.fn(),
+  useNotificationFilters: vi.fn(() => ({ filters: [], isLoading: false })),
   useAttributeStyles: vi.fn(() => ({
     settings: { attributes: {} },
     updateSettings: vi.fn(),
