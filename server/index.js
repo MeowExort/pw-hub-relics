@@ -246,6 +246,8 @@ const ACTION_ROUTE_MAP = {
   [actionHash('updateNotificationSettings')]: { method: 'PUT', path: '/api/telegram/notifications/settings' },
   [actionHash('sendTestNotification')]: { method: 'POST', path: '/api/telegram/notifications/test' },
   [actionHash('getPriceTrends')]: { method: 'GET', path: '/api/analytics/price-trends' },
+  [actionHash('calculateCheapestEnhancement')]: { method: 'POST', path: '/api/optimization/cheapest-enhancement' },
+  [actionHash('getMostProfitableQuest')]: { method: 'GET', path: '/api/optimization/most-profitable-quest' },
 }
 
 // --- Утилиты маршрутизации ---
