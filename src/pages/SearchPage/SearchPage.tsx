@@ -17,6 +17,7 @@ function countActiveFilters(params: Record<string, any>): number {
     'serverId', 'soulType', 'race', 'soulLevel', 'slotTypeId',
     'minPrice', 'maxPrice', 'minEnhancementLevel', 'maxEnhancementLevel',
     'minAbsorbExperience', 'maxAbsorbExperience',
+    'minAdditionalAttributeCount', 'maxAdditionalAttributeCount',
   ]
   let count = filterKeys.filter((k) => params[k] != null).length
   if (params.mainAttributeIds?.length) count++
@@ -55,6 +56,8 @@ export function SearchPage() {
       maxEnhancementLevel: c.maxEnhancementLevel ?? undefined,
       minAbsorbExperience: c.minAbsorbExperience ?? undefined,
       maxAbsorbExperience: c.maxAbsorbExperience ?? undefined,
+      minAdditionalAttributeCount: c.minAdditionalAttributeCount ?? undefined,
+      maxAdditionalAttributeCount: c.maxAdditionalAttributeCount ?? undefined,
     })
   }, [setParams])
 
@@ -73,6 +76,8 @@ export function SearchPage() {
     if (params.maxEnhancementLevel != null) criteria.maxEnhancementLevel = params.maxEnhancementLevel
     if (params.minAbsorbExperience != null) criteria.minAbsorbExperience = params.minAbsorbExperience
     if (params.maxAbsorbExperience != null) criteria.maxAbsorbExperience = params.maxAbsorbExperience
+    if (params.minAdditionalAttributeCount != null) criteria.minAdditionalAttributeCount = params.minAdditionalAttributeCount
+    if (params.maxAdditionalAttributeCount != null) criteria.maxAdditionalAttributeCount = params.maxAdditionalAttributeCount
     if (params.additionalAttributes?.length) {
       criteria.additionalAttributes = params.additionalAttributes
     }

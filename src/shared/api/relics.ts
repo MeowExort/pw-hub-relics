@@ -34,6 +34,8 @@ export function searchRelics(
     MaxEnhancementLevel: params.maxEnhancementLevel,
     MinAbsorbExperience: params.minAbsorbExperience,
     MaxAbsorbExperience: params.maxAbsorbExperience,
+    MinAdditionalAttributeCount: params.minAdditionalAttributeCount,
+    MaxAdditionalAttributeCount: params.maxAdditionalAttributeCount,
     SortBy: params.sortBy,
     SortDirection: params.sortDirection,
     SortAttributeId: params.sortAttributeId,
@@ -71,6 +73,8 @@ export function getPriceTrends(
     maxEnhancementLevel: params.maxEnhancementLevel,
     minAbsorbExperience: params.minAbsorbExperience,
     maxAbsorbExperience: params.maxAbsorbExperience,
+    minAdditionalAttributeCount: params.minAdditionalAttributeCount,
+    maxAdditionalAttributeCount: params.maxAdditionalAttributeCount,
     groupBy: params.groupBy,
   }, signal)
 }

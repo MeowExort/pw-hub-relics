@@ -150,6 +150,18 @@ export function ActiveFilterChips({ params, onChange, onReset }: ActiveFilterChi
       })
     }
 
+    if (params.minAdditionalAttributeCount != null || params.maxAdditionalAttributeCount != null) {
+      const parts: string[] = []
+      if (params.minAdditionalAttributeCount != null) parts.push(`от ${params.minAdditionalAttributeCount}`)
+      if (params.maxAdditionalAttributeCount != null) parts.push(`до ${params.maxAdditionalAttributeCount}`)
+      result.push({
+        key: 'additionalAttributeCount',
+        label: 'Кол-во характеристик',
+        value: parts.join(' '),
+        resetPatch: { minAdditionalAttributeCount: undefined, maxAdditionalAttributeCount: undefined },
+      })
+    }
+
     if (params.additionalAttributes && params.additionalAttributes.length > 0) {
       for (const aa of params.additionalAttributes) {
         const attr = attributes.find((a) => a.id === aa.id)

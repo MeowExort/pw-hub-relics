@@ -106,6 +106,14 @@ interface AnalyticsFiltersProps {
   onMinAbsorbExperienceChange: (v?: number) => void;
   /** Обработчик смены макс. опыта поглощения */
   onMaxAbsorbExperienceChange: (v?: number) => void;
+  /** Мин. кол-во доп. характеристик */
+  minAdditionalAttributeCount?: number;
+  /** Макс. кол-во доп. характеристик */
+  maxAdditionalAttributeCount?: number;
+  /** Обработчик смены мин. кол-ва доп. характеристик */
+  onMinAdditionalAttributeCountChange: (v?: number) => void;
+  /** Обработчик смены макс. кол-ва доп. характеристик */
+  onMaxAdditionalAttributeCountChange: (v?: number) => void;
 }
 
 /**
@@ -144,6 +152,10 @@ export function AnalyticsFilters({
   maxAbsorbExperience,
   onMinAbsorbExperienceChange,
   onMaxAbsorbExperienceChange,
+  minAdditionalAttributeCount,
+  maxAdditionalAttributeCount,
+  onMinAdditionalAttributeCountChange,
+  onMaxAdditionalAttributeCountChange,
 }: AnalyticsFiltersProps) {
   const { data: servers } = useQuery({
     queryKey: ['servers'],
@@ -260,6 +272,15 @@ export function AnalyticsFilters({
             max={maxAbsorbExperience?.toString() ?? ''}
             onMinChange={(v) => onMinAbsorbExperienceChange(v ? Number(v) : undefined)}
             onMaxChange={(v) => onMaxAbsorbExperienceChange(v ? Number(v) : undefined)}
+          />
+        </div>
+        <div className={styles.field}>
+          <PriceRangeInput
+            label="Кол-во характеристик"
+            min={minAdditionalAttributeCount?.toString() ?? ''}
+            max={maxAdditionalAttributeCount?.toString() ?? ''}
+            onMinChange={(v) => onMinAdditionalAttributeCountChange(v ? Number(v) : undefined)}
+            onMaxChange={(v) => onMaxAdditionalAttributeCountChange(v ? Number(v) : undefined)}
           />
         </div>
       </div>

@@ -20,6 +20,8 @@ export interface AnalyticsParams {
   maxEnhancementLevel?: number
   minAbsorbExperience?: number
   maxAbsorbExperience?: number
+  minAdditionalAttributeCount?: number
+  maxAdditionalAttributeCount?: number
 }
 
 /** Маппинг полных ключей в короткие для сжатия URL */
@@ -39,6 +41,8 @@ const KEY_TO_SHORT: Record<string, string> = {
   maxEnhancementLevel: 'e1',
   minAbsorbExperience: 'a0',
   maxAbsorbExperience: 'a1',
+  minAdditionalAttributeCount: 'ac0',
+  maxAdditionalAttributeCount: 'ac1',
 }
 
 const NUM_KEYS: (keyof AnalyticsParams)[] = [
@@ -53,6 +57,8 @@ const NUM_KEYS: (keyof AnalyticsParams)[] = [
   'maxEnhancementLevel',
   'minAbsorbExperience',
   'maxAbsorbExperience',
+  'minAdditionalAttributeCount',
+  'maxAdditionalAttributeCount',
 ]
 
 /** Пустой массив доп. атрибутов (стабильная ссылка для мемоизации) */

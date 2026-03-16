@@ -51,6 +51,10 @@ const defaultProps = {
   maxAbsorbExperience: undefined as number | undefined,
   onMinAbsorbExperienceChange: vi.fn(),
   onMaxAbsorbExperienceChange: vi.fn(),
+  minAdditionalAttributeCount: undefined,
+  maxAdditionalAttributeCount: undefined,
+  onMinAdditionalAttributeCountChange: vi.fn(),
+  onMaxAdditionalAttributeCountChange: vi.fn(),
 };
 
 describe('AnalyticsFilters', () => {

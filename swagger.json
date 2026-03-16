@@ -358,6 +358,22 @@
             }
           },
           {
+            "name": "MinAdditionalAttributeCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "MaxAdditionalAttributeCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "MinPrice",
             "in": "query",
             "schema": {
@@ -532,6 +548,22 @@
               "items": {
                 "$ref": "#/components/schemas/RelicAttributeFilterDto"
               }
+            }
+          },
+          {
+            "name": "MinAdditionalAttributeCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "MaxAdditionalAttributeCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           },
           {
@@ -1877,6 +1909,16 @@
             "items": {
               "$ref": "#/components/schemas/NotificationAttributeFilterDto"
             },
+            "nullable": true
+          },
+          "minAdditionalAttributeCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxAdditionalAttributeCount": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "minPrice": {

@@ -57,6 +57,8 @@ function FilterPreview({ criteria, servers, slotTypes, attributes }: {
   if (criteria.maxEnhancementLevel != null) parts.push(`Заточка до: +${criteria.maxEnhancementLevel}`)
   if (criteria.minAbsorbExperience != null) parts.push(`Опыт от: ${criteria.minAbsorbExperience}`)
   if (criteria.maxAbsorbExperience != null) parts.push(`Опыт до: ${criteria.maxAbsorbExperience}`)
+  if (criteria.minAdditionalAttributeCount != null) parts.push(`Характеристик от: ${criteria.minAdditionalAttributeCount}`)
+  if (criteria.maxAdditionalAttributeCount != null) parts.push(`Характеристик до: ${criteria.maxAdditionalAttributeCount}`)
   if (criteria.minPrice != null) parts.push(`Цена от: ${criteria.minPrice}`)
   if (criteria.maxPrice != null) parts.push(`Цена до: ${criteria.maxPrice}`)
 

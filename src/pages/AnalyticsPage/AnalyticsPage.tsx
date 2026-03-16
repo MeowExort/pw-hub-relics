@@ -37,6 +37,8 @@ export function AnalyticsPage() {
       maxEnhancementLevel: c.maxEnhancementLevel ?? undefined,
       minAbsorbExperience: c.minAbsorbExperience ?? undefined,
       maxAbsorbExperience: c.maxAbsorbExperience ?? undefined,
+      minAdditionalAttributeCount: c.minAdditionalAttributeCount ?? undefined,
+      maxAdditionalAttributeCount: c.maxAdditionalAttributeCount ?? undefined,
     });
   }, [setParams]);
 
@@ -61,6 +63,7 @@ export function AnalyticsPage() {
       params.additionalAttributes, params.minPrice, params.maxPrice,
       params.minEnhancementLevel, params.maxEnhancementLevel,
       params.minAbsorbExperience, params.maxAbsorbExperience,
+      params.minAdditionalAttributeCount, params.maxAdditionalAttributeCount,
     ],
     queryFn: () => getPriceTrends({
       startDate,
@@ -79,6 +82,8 @@ export function AnalyticsPage() {
       maxEnhancementLevel: params.maxEnhancementLevel,
       minAbsorbExperience: params.minAbsorbExperience,
       maxAbsorbExperience: params.maxAbsorbExperience,
+      minAdditionalAttributeCount: params.minAdditionalAttributeCount,
+      maxAdditionalAttributeCount: params.maxAdditionalAttributeCount,
     }),
     enabled: params.serverId !== undefined,
     staleTime: 60000,
@@ -139,6 +144,10 @@ export function AnalyticsPage() {
           maxAbsorbExperience={params.maxAbsorbExperience}
           onMinAbsorbExperienceChange={(v) => setParams({ minAbsorbExperience: v })}
           onMaxAbsorbExperienceChange={(v) => setParams({ maxAbsorbExperience: v })}
+          minAdditionalAttributeCount={params.minAdditionalAttributeCount}
+          maxAdditionalAttributeCount={params.maxAdditionalAttributeCount}
+          onMinAdditionalAttributeCountChange={(v) => setParams({ minAdditionalAttributeCount: v })}
+          onMaxAdditionalAttributeCountChange={(v) => setParams({ maxAdditionalAttributeCount: v })}
         />
 
         {params.serverId === undefined ? (

@@ -22,6 +22,8 @@ const KEY_TO_SHORT: Record<string, string> = {
   maxEnhancementLevel: 'e1',
   minAbsorbExperience: 'a0',
   maxAbsorbExperience: 'a1',
+  minAdditionalAttributeCount: 'ac0',
+  maxAdditionalAttributeCount: 'ac1',
 }
 
 
@@ -37,6 +39,8 @@ const NUM_KEYS: (keyof RelicSearchParams)[] = [
   'maxEnhancementLevel',
   'minAbsorbExperience',
   'maxAbsorbExperience',
+  'minAdditionalAttributeCount',
+  'maxAdditionalAttributeCount',
   'sortAttributeId',
   'pageNumber',
   'pageSize',

@@ -6,6 +6,7 @@ import {
   toggleNotificationFilter,
   deleteNotificationFilter,
 } from '@/shared/api'
+import { isAuthenticated } from '@/shared/api/auth'
 import type { CreateFilterRequest, UpdateFilterRequest } from '@/shared/types'
 
 const QUERY_KEY = ['notifications', 'filters']
@@ -17,6 +18,7 @@ export function useNotificationFilters() {
   const query = useQuery({
     queryKey: QUERY_KEY,
     queryFn: ({ signal }) => getNotificationFilters(signal),
+    enabled: isAuthenticated(),
   })
 
   const createMutation = useMutation({

@@ -87,6 +87,8 @@ export interface RelicSearchParams {
   maxEnhancementLevel?: number
   minAbsorbExperience?: number
   maxAbsorbExperience?: number
+  minAdditionalAttributeCount?: number
+  maxAdditionalAttributeCount?: number
   sortBy?: string
   sortDirection?: 'asc' | 'desc'
   sortAttributeId?: number
@@ -118,6 +120,8 @@ export interface FilterCriteriaDto {
   maxEnhancementLevel?: number | null
   minAbsorbExperience?: number | null
   maxAbsorbExperience?: number | null
+  minAdditionalAttributeCount?: number | null
+  maxAdditionalAttributeCount?: number | null
 }
 
 /** Запрос на создание фильтра уведомлений */
@@ -227,6 +231,8 @@ export interface PriceTrendsParams {
   maxEnhancementLevel?: number
   minAbsorbExperience?: number
   maxAbsorbExperience?: number
+  minAdditionalAttributeCount?: number
+  maxAdditionalAttributeCount?: number
   groupBy?: 'hour' | 'day' | 'week'
 }
 

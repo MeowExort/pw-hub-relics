@@ -118,6 +118,14 @@ export function SearchFilters({ params, onChange, onReset, onSubscribe }: Search
         onMaxChange={(v) => onChange({ maxAbsorbExperience: v ? Number(v) : undefined })}
       />
 
+      <PriceRangeInput
+        label="Кол-во характеристик"
+        min={params.minAdditionalAttributeCount?.toString() ?? ''}
+        max={params.maxAdditionalAttributeCount?.toString() ?? ''}
+        onMinChange={(v) => onChange({ minAdditionalAttributeCount: v ? Number(v) : undefined })}
+        onMaxChange={(v) => onChange({ maxAdditionalAttributeCount: v ? Number(v) : undefined })}
+      />
+
       <div className={styles.actions}>
         {onSubscribe && (
           <Button variant="secondary" size="sm" onClick={onSubscribe} className={styles.subscribeBtn}>
