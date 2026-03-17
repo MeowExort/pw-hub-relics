@@ -5,12 +5,13 @@ import { RecommendationCard } from '../RecommendationCard';
 import type { Recommendation } from '@/shared/types';
 
 const mockRecommendation: Recommendation = {
-  relicListingId: 123,
+  relicListingId: '123',
   relicName: 'Тестовая реликвия',
   price: 10000,
   absorbExperience: 500,
   pricePerExperience: 20,
   cumulativeExperience: 1500,
+  cumulativeCost: 30000,
 };
 
 function renderCard(rec = mockRecommendation) {
