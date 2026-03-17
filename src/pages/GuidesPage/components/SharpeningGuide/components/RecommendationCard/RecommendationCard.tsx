@@ -1,6 +1,34 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Recommendation } from '@/shared/types';
 import styles from './RecommendationCard.module.scss';
+
+/**
+ * Кнопка копирования названия реликвии в буфер обмена.
+ * @param name — название реликвии для копирования
+ */
+function CopyNameButton({ name }: { name: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(name);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  return (
+    <button
+      className={styles.copyButton}
+      onClick={handleCopy}
+      aria-label="Скопировать название"
+      title="Скопировать название"
+      type="button"
+    >
+      {copied ? '✓' : '📋'}
+    </button>
+  );
+}
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
@@ -20,7 +48,10 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
   return (
     <div className={styles.card} onClick={handleClick} role="button" tabIndex={0}>
       <div className={styles.header}>
-        <span className={styles.name}>{recommendation.relicName}</span>
+        <span className={styles.name}>
+          {recommendation.relicName}
+          <CopyNameButton name={recommendation.relicName} />
+        </span>
         <span className={styles.price}>{recommendation.price / 100} зол.</span>
       </div>
       <div className={styles.stats}>

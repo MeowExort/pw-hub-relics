@@ -30,9 +30,30 @@
 }
 
 .name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-weight: 600;
   color: var(--text);
   font-size: var(--font-size-sm);
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: var(--card-hover);
+    color: var(--primary);
+  }
 }
 
 .price {
