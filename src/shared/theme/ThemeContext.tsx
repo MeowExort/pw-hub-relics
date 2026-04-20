@@ -22,12 +22,8 @@ const ThemeContext = createContext<ThemeContextValue | null>(null)
  * Получает сохранённую тему из localStorage или возвращает тему по умолчанию.
  */
 function getStoredTheme(): Theme {
-  try {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY)
-    if (stored === 'light' || stored === 'dark') return stored
-  } catch {
-    // localStorage недоступен
-  }
+  // Светлая тема отключена для унификации цветовой схемы с tracker —
+  // возвращаем тёмную независимо от сохранённого значения.
   return 'dark'
 }
 

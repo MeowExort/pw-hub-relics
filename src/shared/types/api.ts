@@ -326,6 +326,7 @@ export interface MostProfitableQuestResult {
   calculatedAt: string
   recommendations: QuestRecommendation[]
   levelOneRecommendations: LevelOneRecommendation[]
+  priceBreakdown: Record<string, Record<string, PriceBreakdownEntry>>
 }
 
 /** Рекомендация по квесту */
@@ -343,7 +344,6 @@ export interface QuestRecommendation {
   profitPercent: number
   listingsCountByQuestCost?: number
   listingsCountByExpectedReward?: number
-  priceBreakdown: Record<string, PriceBreakdownEntry>
 }
 
 /** Рекомендация для 1 уровня души */
@@ -354,13 +354,20 @@ export interface LevelOneRecommendation {
   expectedReward: number
   expectedRewardFormatted: string
   listingsCountByExpectedReward?: number
-  avgMinPriceByRace: Record<string, number>
+  minPriceByRelicDefinition: RelicDefinitionPrice[]
   listingsCount: number
+}
+
+/** Цена реликвии по определению */
+export interface RelicDefinitionPrice {
+  id: number
+  name: string
+  minPrice: number
 }
 
 /** Запись разбивки цен по уровню */
 export interface PriceBreakdownEntry {
   avgMinPrice: number
-  minPriceByRace: Record<string, number>
+  minPriceByRelicDefinition: RelicDefinitionPrice[]
   listingsCount: number
 }

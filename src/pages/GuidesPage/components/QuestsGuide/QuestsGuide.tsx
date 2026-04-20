@@ -101,7 +101,7 @@ export function QuestsGuide() {
           {bestRecommendation && (
             <section className={styles.bestQuestSection}>
               <h3 className={styles.sectionTitle}>🔥 Самый выгодный квест</h3>
-              <QuestCard recommendation={bestRecommendation} highlighted />
+              <QuestCard recommendation={bestRecommendation} priceBreakdown={result.priceBreakdown?.[String(bestRecommendation.soulType)]} highlighted />
             </section>
           )}
 
@@ -110,7 +110,7 @@ export function QuestsGuide() {
               <h3 className={styles.sectionTitle}>Другие рекомендации</h3>
               <div className={styles.grid}>
                 {otherRecommendations.map((rec) => (
-                  <QuestCard key={`${rec.soulType}-${rec.targetSoulLevel}`} recommendation={rec} />
+                  <QuestCard key={`${rec.soulType}-${rec.targetSoulLevel}`} recommendation={rec} priceBreakdown={result.priceBreakdown?.[String(rec.soulType)]} />
                 ))}
               </div>
             </section>
@@ -127,15 +127,15 @@ export function QuestsGuide() {
                       <div className={styles.levelOneDetail}>
                         <span className={styles.levelOneLabel}>Ожидаемая награда:</span>
                         <span className={styles.levelOneValueGroup}>
-                          {rec.avgMinPriceByRace && Object.keys(rec.avgMinPriceByRace).length > 0 ? (
+                          {rec.minPriceByRelicDefinition && rec.minPriceByRelicDefinition.length > 0 ? (
                             <Tooltip
                               text={
                                 <div className={styles.raceTooltip}>
-                                  <div className={styles.raceTooltipTitle}>Цена по расам:</div>
-                                  {Object.entries(rec.avgMinPriceByRace).map(([race, price]) => (
-                                    <div key={race} className={styles.raceRow}>
-                                      <span className={styles.raceName}>{race}</span>
-                                      <span className={styles.racePrice}>{price}</span>
+                                  <div className={styles.raceTooltipTitle}>Мин. цены по реликвиям:</div>
+                                  {rec.minPriceByRelicDefinition.map((relic) => (
+                                    <div key={relic.id} className={styles.raceRow}>
+                                      <span className={styles.raceName}>{relic.name}</span>
+                                      <span className={styles.racePrice}>{relic.minPrice}</span>
                                     </div>
                                   ))}
                                 </div>

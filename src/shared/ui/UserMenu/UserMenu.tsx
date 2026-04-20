@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import { useTheme } from '@/shared/theme'
 import { logout } from '@/shared/api/auth'
 import styles from './UserMenu.module.scss'
 
@@ -10,7 +9,6 @@ import styles from './UserMenu.module.scss'
 export function UserMenu() {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const { theme, toggleTheme } = useTheme()
 
   /** Закрытие меню при клике вне */
   useEffect(() => {
@@ -31,11 +29,6 @@ export function UserMenu() {
     logout()
   }
 
-  /** Обработчик переключения темы */
-  const handleToggleTheme = () => {
-    toggleTheme()
-  }
-
   return (
     <div className={styles.userMenu} ref={menuRef}>
       <button
@@ -50,15 +43,6 @@ export function UserMenu() {
 
       {open && (
         <div className={styles.dropdown} role="menu">
-          <button
-            className={styles.menuItem}
-            onClick={handleToggleTheme}
-            role="menuitem"
-          >
-            <span className={styles.menuIcon}>{theme === 'dark' ? '☀️' : '🌙'}</span>
-            <span>{theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}</span>
-          </button>
-          <div className={styles.divider} />
           <button
             className={styles.menuItem}
             onClick={handleLogout}

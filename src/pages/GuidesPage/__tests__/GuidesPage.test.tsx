@@ -51,7 +51,6 @@ const mockQuestResult = {
       expectedProfit: 614,
       expectedProfitFormatted: '6 зол. 14 сер.',
       profitPercent: 71.6,
-      priceBreakdown: {},
     },
     {
       rank: 2,
@@ -65,7 +64,6 @@ const mockQuestResult = {
       expectedProfit: 448,
       expectedProfitFormatted: '4 зол. 48 сер.',
       profitPercent: 70,
-      priceBreakdown: {},
     },
   ],
   levelOneRecommendations: [
@@ -75,7 +73,7 @@ const mockQuestResult = {
       soulTypeName: 'Тяньюя',
       expectedReward: 119,
       expectedRewardFormatted: '1 зол. 19 сер.',
-      avgMinPriceByRace: {},
+      minPriceByRelicDefinition: [],
       listingsCount: 1059,
     },
   ],

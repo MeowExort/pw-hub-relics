@@ -1,16 +1,6 @@
 import styles from './QuestCard.module.scss';
 import { Badge, Tooltip } from '@/shared/ui';
-import type { QuestRecommendation } from '@/shared/types';
-
-/** Маппинг английских названий рас на русские */
-const RACE_NAMES: Record<string, string> = {
-  human: 'Люди',
-  untamed: 'Зооморфы',
-  winged: 'Сиды',
-  tideborn: 'Амфибии',
-  earthguard: 'Древние',
-  nightshade: 'Тени',
-};
+import type { QuestRecommendation, PriceBreakdownEntry, RelicDefinitionPrice } from '@/shared/types';
 
 /** Форматирует цену из серебра в читаемый вид */
 function formatPrice(silver: number): string {
@@ -21,23 +11,22 @@ function formatPrice(silver: number): string {
   return `${gold} зол. ${rest} сер.`;
 }
 
-interface RacePriceTooltipProps {
-  /** Цены по расам */
-  priceByRace: Record<string, number>;
+interface RelicPriceTooltipProps {
+  /** Цены по реликвиям */
+  relics: RelicDefinitionPrice[];
 }
 
-/** Содержимое тултипа с ценами по расам */
-function RacePriceTooltipContent({ priceByRace }: RacePriceTooltipProps) {
-  const entries = Object.entries(priceByRace);
-  if (entries.length === 0) return null;
+/** Содержимое тултипа с ценами по реликвиям */
+function RelicPriceTooltipContent({ relics }: RelicPriceTooltipProps) {
+  if (relics.length === 0) return null;
 
   return (
     <div className={styles.raceTooltip}>
-      <div className={styles.raceTooltipTitle}>Цена по расам:</div>
-      {entries.map(([race, price]) => (
-        <div key={race} className={styles.raceRow}>
-          <span className={styles.raceName}>{RACE_NAMES[race] || race}</span>
-          <span className={styles.racePrice}>{formatPrice(price)}</span>
+      <div className={styles.raceTooltipTitle}>Мин. цены по реликвиям:</div>
+      {relics.map((relic) => (
+        <div key={relic.id} className={styles.raceRow}>
+          <span className={styles.raceName}>{relic.name}</span>
+          <span className={styles.racePrice}>{formatPrice(relic.minPrice)}</span>
         </div>
       ))}
     </div>
@@ -47,6 +36,8 @@ function RacePriceTooltipContent({ priceByRace }: RacePriceTooltipProps) {
 interface QuestCardProps {
   /** Рекомендация по квесту */
   recommendation: QuestRecommendation;
+  /** Разбивка цен по уровням для данного типа души */
+  priceBreakdown?: Record<string, PriceBreakdownEntry>;
   /** Выделить как лучший квест */
   highlighted?: boolean;
 }
@@ -55,22 +46,22 @@ interface QuestCardProps {
  * Карточка рекомендации по квесту.
  * Отображает тип души, уровень, стоимость, награду и профит.
  */
-export function QuestCard({ recommendation, highlighted }: QuestCardProps) {
+export function QuestCard({ recommendation, priceBreakdown, highlighted }: QuestCardProps) {
   const getProfitVariant = (percent: number) => {
     if (percent >= 100) return 'success';
     if (percent >= 50) return 'warning';
     return 'primary';
   };
 
-  // Получаем цены по расам для стоимости квеста (уровень targetSoulLevel - 1)
+  // Получаем цены по реликвиям для стоимости квеста (уровень targetSoulLevel - 1)
   const questCostLevel = String(recommendation.targetSoulLevel - 1);
-  const questCostBreakdown = recommendation.priceBreakdown?.[questCostLevel];
-  const questCostByRace = questCostBreakdown?.minPriceByRace;
+  const questCostBreakdown = priceBreakdown?.[questCostLevel];
+  const questCostRelics = questCostBreakdown?.minPriceByRelicDefinition;
 
-  // Получаем цены по расам для ожидаемой награды (уровень targetSoulLevel)
+  // Получаем цены по реликвиям для ожидаемой награды (уровень targetSoulLevel)
   const rewardLevel = String(recommendation.targetSoulLevel);
-  const rewardBreakdown = recommendation.priceBreakdown?.[rewardLevel];
-  const rewardByRace = rewardBreakdown?.minPriceByRace;
+  const rewardBreakdown = priceBreakdown?.[rewardLevel];
+  const rewardRelics = rewardBreakdown?.minPriceByRelicDefinition;
 
   return (
     <div className={`${styles.card} ${highlighted ? styles.highlighted : ''}`}>
@@ -90,8 +81,8 @@ export function QuestCard({ recommendation, highlighted }: QuestCardProps) {
         <div className={styles.detail}>
           <span className={styles.label}>Стоимость квеста:</span>
           <span className={styles.valueGroup}>
-            {questCostByRace ? (
-              <Tooltip text={<RacePriceTooltipContent priceByRace={questCostByRace} />} position="top">
+            {questCostRelics && questCostRelics.length > 0 ? (
+              <Tooltip text={<RelicPriceTooltipContent relics={questCostRelics} />} position="top">
                 <span className={styles.value + ' ' + styles.hoverable}>{recommendation.questCostFormatted}</span>
               </Tooltip>
             ) : (
@@ -107,8 +98,8 @@ export function QuestCard({ recommendation, highlighted }: QuestCardProps) {
         <div className={styles.detail}>
           <span className={styles.label}>Ожидаемая награда:</span>
           <span className={styles.valueGroup}>
-            {rewardByRace ? (
-              <Tooltip text={<RacePriceTooltipContent priceByRace={rewardByRace} />} position="top">
+            {rewardRelics && rewardRelics.length > 0 ? (
+              <Tooltip text={<RelicPriceTooltipContent relics={rewardRelics} />} position="top">
                 <span className={styles.valueReward + ' ' + styles.hoverable}>{recommendation.expectedRewardFormatted}</span>
               </Tooltip>
             ) : (
